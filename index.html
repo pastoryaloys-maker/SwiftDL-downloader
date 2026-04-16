@@ -10,266 +10,226 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  /* ── Blue & Yellow palette ── */
-  --bg:#05101f;
-  --bg2:#081428;
-  --bg3:#0c1d38;
-  --bg4:#102244;
-
-  --blue:#1d6bfc;
-  --blue2:#1558d6;
-  --blue3:#0e3fa0;
-  --blue-glow:rgba(29,107,252,0.25);
-  --blue-soft:rgba(29,107,252,0.10);
-  --blue-border:rgba(29,107,252,0.30);
-
-  --yellow:#f5c518;
-  --yellow2:#d4a810;
-  --yellow-glow:rgba(245,197,24,0.25);
-  --yellow-soft:rgba(245,197,24,0.10);
-  --yellow-border:rgba(245,197,24,0.35);
-
-  --surface:rgba(12,29,56,0.95);
-  --surface2:rgba(16,34,68,0.90);
-  --border:rgba(29,107,252,0.15);
-  --border2:rgba(29,107,252,0.28);
-
-  --text:#e8edf5;
-  --text2:#8fa4c8;
-  --text3:#4d6a99;
-
+  --bg:#05101f;--bg2:#081428;--bg3:#0c1d38;--bg4:#102244;
+  --blue:#1d6bfc;--blue2:#1558d6;--blue3:rgba(29,107,252,0.15);--blue4:rgba(29,107,252,0.30);
+  --yellow:#f5c518;--yellow2:#d4a810;--yellow3:rgba(245,197,24,0.12);--yellow4:rgba(245,197,24,0.32);
+  --surface:rgba(11,26,50,0.96);--surface2:rgba(16,34,68,0.92);
+  --border:rgba(29,107,252,0.14);--border2:rgba(29,107,252,0.26);
+  --text:#dde6f5;--text2:#7a9ac8;--text3:#3d5c8a;
   --green:#22c55e;--red:#f43f5e;
   --r:12px;--r2:9px;--r3:6px;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow-x:hidden}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden}
 #root{min-height:100vh;position:relative}
 
-/* ══ BACKGROUND ART ═══════════════════════════════════════════════════ */
-#bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-
-/* Radial glows */
-.bg-glow1{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(29,107,252,0.08) 0%,transparent 70%);top:-100px;left:-100px}
-.bg-glow2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,197,24,0.06) 0%,transparent 70%);bottom:50px;right:-80px}
-.bg-glow3{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(29,107,252,0.05) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%)}
-
-/* Music staff lines */
-.staff{position:absolute;left:0;right:0;pointer-events:none}
-.staff line{stroke:rgba(29,107,252,0.12)}
-
-/* Floating music notes */
-.note{position:absolute;pointer-events:none;animation:floatnote linear infinite;font-style:normal}
-@keyframes floatnote{
-  0%  {transform:translateY(105vh) rotate(-10deg);opacity:0}
-  8%  {opacity:1}
-  92% {opacity:1}
-  100%{transform:translateY(-80px) rotate(15deg);opacity:0}
-}
-
+/* ═══ BACKGROUND ART ════════════════════════════════════════════════════ */
+#bg-art{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-glow{position:absolute;border-radius:50%;filter:blur(80px)}
+.g1{width:500px;height:500px;background:rgba(29,107,252,0.09);top:-120px;left:-80px}
+.g2{width:420px;height:420px;background:rgba(245,197,24,0.06);bottom:80px;right:-60px}
+.g3{width:350px;height:350px;background:rgba(29,107,252,0.06);top:40%;left:45%}
+/* Staff lines */
+.staff{position:absolute;left:0;right:0;pointer-events:none;opacity:1}
+/* Floating notes */
+.fn{position:absolute;pointer-events:none;animation:floatnote linear infinite}
+@keyframes floatnote{0%{transform:translateY(105vh) rotate(-8deg);opacity:0}8%{opacity:1}92%{opacity:1}100%{transform:translateY(-90px) rotate(12deg);opacity:0}}
 /* EQ bars */
-.eq-col{position:absolute;bottom:0;display:flex;align-items:flex-end;gap:3px}
-.eqb{width:4px;border-radius:2px 2px 0 0;animation:eqpulse ease-in-out infinite}
-@keyframes eqpulse{0%,100%{transform:scaleY(0.15)}50%{transform:scaleY(1)}}
+.eq-side{position:absolute;bottom:0;display:flex;align-items:flex-end;gap:4px;padding:0 14px}
+.eqb{width:4px;border-radius:2px 2px 0 0;transform-origin:bottom;animation:eqpulse ease-in-out infinite}
+@keyframes eqpulse{0%,100%{transform:scaleY(0.1)}50%{transform:scaleY(1)}}
 
-/* Piano */
-.piano-wrap{position:absolute;bottom:0;left:0;right:0;height:80px;opacity:0.07}
+/* ═══ LAYOUT ══════════════════════════════════════════════════════════════ */
+#app{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:14px 14px 100px}
 
-/* ══ LAYOUT ════════════════════════════════════════════════════════════ */
-#app{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:14px 14px 100px}
-
-/* ══ HEADER ════════════════════════════════════════════════════════════ */
-.header{display:flex;align-items:center;gap:14px;padding:18px 0 14px;border-bottom:1px solid var(--border)}
-.logo{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 24px var(--blue-glow),0 0 12px var(--yellow-glow);flex-shrink:0}
+/* ═══ HEADER ══════════════════════════════════════════════════════════════ */
+.hdr{display:flex;align-items:center;gap:14px;padding:18px 0 14px;border-bottom:1px solid var(--border)}
+.logo{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 22px rgba(29,107,252,0.35),0 0 14px rgba(245,197,24,0.2);flex-shrink:0}
 .brand{font-size:22px;font-weight:900;letter-spacing:-0.5px}
-.brand span.b{color:var(--blue)}
-.brand span.y{color:var(--yellow)}
-.brand-sub{font-size:11px;color:var(--text3);margin-top:1px;letter-spacing:.04em}
-.heq{display:flex;align-items:flex-end;gap:3px;height:28px;margin-left:auto;padding-right:4px}
-.heq-bar{width:4px;border-radius:2px;transition:height .25s ease}
+.brand-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.heq{display:flex;align-items:flex-end;gap:3px;height:28px;margin-left:auto}
+.hb{width:4px;border-radius:2px;transition:height .28s ease}
 
-/* ══ NAV ═══════════════════════════════════════════════════════════════ */
+/* ═══ NAV ═════════════════════════════════════════════════════════════════ */
 .nav{display:flex;gap:3px;background:var(--bg3);border-radius:var(--r);padding:4px;margin:14px 0;border:1px solid var(--border);flex-wrap:wrap}
-.nb{flex:1;min-width:88px;padding:9px 10px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:600;border-radius:var(--r2);cursor:pointer;transition:all .2s;white-space:nowrap;text-align:center;font-family:inherit}
-.nb.on{background:var(--blue);color:#fff;box-shadow:0 0 16px var(--blue-glow)}
-.nb:hover:not(.on){background:var(--blue-soft);color:var(--text)}
+.nb{flex:1;min-width:85px;padding:9px 10px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:700;border-radius:var(--r2);cursor:pointer;transition:all .2s;text-align:center;font-family:inherit;white-space:nowrap}
+.nb.on{background:var(--blue);color:#fff;box-shadow:0 0 16px rgba(29,107,252,0.4)}
+.nb:hover:not(.on){background:var(--blue3);color:var(--text)}
 
-/* ══ CARDS ══════════════════════════════════════════════════════════════ */
+/* ═══ CARDS ═══════════════════════════════════════════════════════════════ */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);backdrop-filter:blur(10px)}
 .cp{padding:18px}
-.gcard{border-color:var(--blue-border);box-shadow:0 0 20px rgba(29,107,252,0.08),0 4px 20px rgba(0,0,0,0.3)}
-.ycard{border-color:var(--yellow-border);box-shadow:0 0 16px rgba(245,197,24,0.07)}
+.gcard{border-color:var(--border2);box-shadow:0 0 18px rgba(29,107,252,0.07),0 4px 20px rgba(0,0,0,.35)}
 
-/* ══ INPUT ══════════════════════════════════════════════════════════════ */
-.inp{width:100%;padding:12px 16px;background:rgba(29,107,252,0.06);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-size:14px;outline:none;transition:all .2s;font-family:inherit}
-.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft);background:rgba(29,107,252,0.09)}
+/* ═══ INPUT ═══════════════════════════════════════════════════════════════ */
+.inp{width:100%;padding:12px 16px;background:rgba(29,107,252,0.07);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-size:14px;outline:none;transition:all .2s;font-family:inherit}
+.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,107,252,0.14);background:rgba(29,107,252,0.10)}
 .inp::placeholder{color:var(--text3)}
-textarea.inp{resize:vertical;min-height:90px}
+textarea.inp{resize:vertical;min-height:92px;line-height:1.6}
 
-/* ══ BUTTONS ════════════════════════════════════════════════════════════ */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r2);font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:inherit;white-space:nowrap}
-.btn:hover{background:rgba(29,107,252,0.12);border-color:var(--blue-border)}
+/* ═══ BUTTONS ═════════════════════════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r2);font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:inherit;transition:all .18s;white-space:nowrap}
+.btn:hover{background:var(--blue3);border-color:var(--border2)}
 .btn:active{transform:scale(.97)}
-.btn-blue{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 14px var(--blue-glow)}
-.btn-blue:hover{background:var(--blue2);box-shadow:0 0 22px var(--blue-glow);filter:brightness(1.06)}
-.btn-yellow{background:var(--yellow);border-color:var(--yellow);color:#000;box-shadow:0 0 14px var(--yellow-glow)}
-.btn-yellow:hover{background:var(--yellow2);box-shadow:0 0 22px var(--yellow-glow)}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn-blue{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 14px rgba(29,107,252,0.35)}
+.btn-blue:hover{background:var(--blue2);box-shadow:0 0 22px rgba(29,107,252,0.5)}
+.btn-yellow{background:var(--yellow);border-color:var(--yellow);color:#000;font-weight:800;box-shadow:0 0 14px rgba(245,197,24,0.3)}
+.btn-yellow:hover{background:var(--yellow2);box-shadow:0 0 22px rgba(245,197,24,0.45)}
 .btn-red{background:rgba(244,63,94,0.1);border-color:rgba(244,63,94,0.3);color:var(--red)}
 .btn-red:hover{background:rgba(244,63,94,0.2)}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:var(--r3)}
 .btn-full{width:100%;padding:14px;font-size:15px}
-.btn-icon{padding:9px}
-.btn:disabled{opacity:.45;pointer-events:none}
 
-/* ══ QUALITY / FORMAT ═══════════════════════════════════════════════════ */
+/* ═══ QUALITY / FORMAT ════════════════════════════════════════════════════ */
 .qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:7px}
 .qp{border:1px solid var(--border2);border-radius:var(--r2);padding:10px 6px;text-align:center;cursor:pointer;transition:all .18s;background:rgba(255,255,255,0.02)}
-.qp:hover{border-color:var(--blue-border);background:var(--blue-soft)}
-.qp.on{border-color:var(--yellow);background:var(--yellow-soft);box-shadow:0 0 10px var(--yellow-glow)}
-.qp .ql{font-size:13px;font-weight:800;color:var(--text)}
+.qp:hover{border-color:var(--blue4);background:var(--blue3)}
+.qp.on{border-color:var(--yellow);background:var(--yellow3);box-shadow:0 0 10px rgba(245,197,24,0.18)}
+.ql{font-size:13px;font-weight:800;color:var(--text)}
 .qp.on .ql{color:var(--yellow)}
-.qp .qs{font-size:10px;color:var(--text3);margin-top:2px}
-.qp.on .qs{color:rgba(245,197,24,.7)}
+.qs{font-size:10px;color:var(--text3);margin-top:2px}
+.qp.on .qs{color:rgba(245,197,24,.65)}
 .fpills{display:flex;flex-wrap:wrap;gap:7px}
 .fp{padding:7px 16px;border-radius:99px;font-size:12px;font-weight:700;border:1px solid var(--border2);background:rgba(255,255,255,0.03);color:var(--text2);cursor:pointer;transition:all .18s;letter-spacing:.05em}
-.fp:hover{border-color:var(--border2);color:var(--text);background:var(--blue-soft)}
-.fp.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 10px var(--blue-glow)}
-.fp.aud{background:var(--yellow-soft);border-color:var(--yellow-border);color:var(--yellow)}
+.fp:hover{color:var(--text);background:var(--blue3)}
+.fp.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.fp.aud{background:var(--yellow3);border-color:var(--yellow4);color:var(--yellow2)}
 .fp.aud.on{background:var(--yellow);border-color:var(--yellow);color:#000}
 
-/* ══ PLATFORM TABS ══════════════════════════════════════════════════════ */
+/* ═══ PLATFORM TABS ═══════════════════════════════════════════════════════ */
 .ptabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
 .pt{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;font-size:12px;font-weight:700;border:1px solid var(--border2);background:rgba(255,255,255,0.03);color:var(--text2);cursor:pointer;transition:all .2s;user-select:none}
-.pt:hover{border-color:var(--border2);color:var(--text);background:var(--blue-soft)}
+.pt:hover{color:var(--text);background:var(--blue3)}
 .pt.on{border-color:transparent;color:#fff}
-.pt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-/* ══ VIDEO GRID ═════════════════════════════════════════════════════════ */
+/* ═══ VIDEO GRID ══════════════════════════════════════════════════════════ */
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
 .vc{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--surface);cursor:pointer;transition:all .2s;position:relative}
-.vc:hover{border-color:var(--blue-border);box-shadow:0 0 18px var(--blue-glow),0 4px 16px rgba(0,0,0,.4);transform:translateY(-2px)}
-.vc-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--bg3)}
-.vc-thumb-ph{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,var(--bg3),var(--bg4));display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text3)}
+.vc:hover{border-color:var(--border2);box-shadow:0 0 18px rgba(29,107,252,0.2);transform:translateY(-2px)}
+.vc-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--bg3)}
+.vc-ph{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,var(--bg3),var(--bg4));display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--text3)}
 .vc-dur{position:absolute;bottom:44px;right:7px;background:rgba(0,0,0,.82);color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700}
-.vc-dl-btn{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0;transition:opacity .18s;cursor:pointer;box-shadow:0 0 10px var(--yellow-glow)}
-.vc:hover .vc-dl-btn{opacity:1}
+.vc-dlbtn{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0;transition:opacity .18s;cursor:pointer;box-shadow:0 0 10px rgba(245,197,24,.4)}
+.vc:hover .vc-dlbtn{opacity:1}
 .vc-body{padding:9px 11px}
-.vc-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px}
+.vc-title{font-size:12px;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px}
 .vc-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--text3)}
 
-/* ══ DOWNLOAD ITEM ══════════════════════════════════════════════════════ */
-.dli{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:8px;transition:border-color .2s}
-.dli.downloading{border-color:var(--blue-border)}
-.dli.done{border-color:rgba(34,197,94,.25)}
-.dli.error{border-color:rgba(244,63,94,.25)}
+/* ═══ DOWNLOAD ITEM ═══════════════════════════════════════════════════════ */
+.dli{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:9px;transition:border-color .2s}
+.dli.downloading{border-color:var(--border2)}
+.dli.done{border-color:rgba(34,197,94,.22)}
+.dli.error{border-color:rgba(244,63,94,.22)}
 .pbar{height:5px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:9px 0 6px}
 .pfill{height:100%;border-radius:3px;transition:width .35s ease;position:relative;overflow:hidden}
-.pfill::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:shimmer 1.5s infinite}
-@keyframes shimmer{100%{left:100%}}
+.pfill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:shim 1.6s infinite}
+@keyframes shim{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
-/* ══ BADGES ═════════════════════════════════════════════════════════════ */
+/* ═══ BADGES ══════════════════════════════════════════════════════════════ */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
-.bdg-blue{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-border)}
-.bdg-yellow{background:var(--yellow-soft);color:var(--yellow2);border:1px solid var(--yellow-border)}
-.bdg-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
-.bdg-red{background:rgba(244,63,94,.1);color:var(--red);border:1px solid rgba(244,63,94,.25)}
-.bdg-gray{background:rgba(255,255,255,.06);color:var(--text3);border:1px solid var(--border)}
+.b-blue{background:var(--blue3);color:var(--blue);border:1px solid var(--blue4)}
+.b-yellow{background:var(--yellow3);color:var(--yellow2);border:1px solid var(--yellow4)}
+.b-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.b-red{background:rgba(244,63,94,.1);color:var(--red);border:1px solid rgba(244,63,94,.25)}
+.b-gray{background:rgba(255,255,255,.06);color:var(--text3);border:1px solid var(--border)}
 
-/* ══ MISC ════════════════════════════════════════════════════════════════ */
+/* ═══ MISC ════════════════════════════════════════════════════════════════ */
 .sec-lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
 .divider{height:1px;background:var(--border);margin:14px 0}
-.info-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--text3)}
-.dot3{width:3px;height:3px;border-radius:50%;background:var(--text3)}
-.thumb-prev{width:100%;height:195px;position:relative;overflow:hidden;border-radius:var(--r) var(--r) 0 0}
-.thumb-prev img{width:100%;height:100%;object-fit:cover}
-.thumb-over{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.85))}
-.thumb-dur{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.75);color:#fff;font-size:12px;padding:3px 8px;border-radius:4px;font-weight:700}
-.thumb-plat{position:absolute;top:10px;left:12px}
-.thumb-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px var(--yellow-glow);cursor:pointer;transition:transform .2s}
-.thumb-play:hover{transform:translate(-50%,-50%) scale(1.1)}
+.irow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--text3)}
+.dot3{width:3px;height:3px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.tprev{width:100%;height:195px;position:relative;overflow:hidden;border-radius:var(--r) var(--r) 0 0}
+.tprev img{width:100%;height:100%;object-fit:cover}
+.tover{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.85))}
+.tdur{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.75);color:#fff;font-size:12px;padding:3px 8px;border-radius:4px;font-weight:700}
+.tplat{position:absolute;top:10px;left:12px}
+.tplay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 0 24px rgba(245,197,24,.45);transition:transform .2s}
+.tplay:hover{transform:translate(-50%,-50%) scale(1.1)}
 
-/* ══ TOAST ══════════════════════════════════════════════════════════════ */
-.toast{position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;backdrop-filter:blur(14px);animation:tin .3s ease;max-width:340px;border:1px solid}
+/* ═══ STATUS BANNER ═══════════════════════════════════════════════════════ */
+.status-banner{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:var(--r2);font-size:13px;line-height:1.6;border:1px solid;margin-bottom:14px}
+.sb-ok{background:rgba(34,197,94,.08);color:var(--green);border-color:rgba(34,197,94,.25)}
+.sb-err{background:rgba(244,63,94,.08);color:var(--red);border-color:rgba(244,63,94,.25)}
+.sb-warn{background:var(--yellow3);color:var(--yellow2);border-color:var(--yellow4)}
+.sb-info{background:var(--blue3);color:var(--blue);border-color:var(--blue4)}
+
+/* ═══ TOAST ═══════════════════════════════════════════════════════════════ */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;backdrop-filter:blur(14px);animation:tin .3s ease;max-width:360px;border:1px solid;box-shadow:0 4px 20px rgba(0,0,0,.4)}
 @keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.t-ok{background:rgba(34,197,94,.12);color:var(--green);border-color:rgba(34,197,94,.3)}
-.t-err{background:rgba(244,63,94,.12);color:var(--red);border-color:rgba(244,63,94,.3)}
-.t-info{background:var(--blue-soft);color:var(--blue);border-color:var(--blue-border)}
-.t-warn{background:var(--yellow-soft);color:var(--yellow2);border-color:var(--yellow-border)}
+.t-ok{background:rgba(34,197,94,.14);color:var(--green);border-color:rgba(34,197,94,.3)}
+.t-err{background:rgba(244,63,94,.14);color:var(--red);border-color:rgba(244,63,94,.3)}
+.t-info{background:var(--blue3);color:var(--blue);border-color:var(--blue4)}
+.t-warn{background:var(--yellow3);color:var(--yellow2);border-color:var(--yellow4)}
 
-/* ══ SPINNER ════════════════════════════════════════════════════════════ */
+/* ═══ SPINNER ═════════════════════════════════════════════════════════════ */
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner{width:34px;height:34px;border:3px solid var(--blue-soft);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
-@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
-.pulse-t{animation:pulse 1.5s ease-in-out infinite;color:var(--text2);font-size:13px;margin-top:10px;text-align:center}
+.spinner{width:34px;height:34px;border:3px solid var(--blue3);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+.pulse-t{color:var(--text2);font-size:13px;margin-top:10px;text-align:center;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
-/* ══ EMPTY ══════════════════════════════════════════════════════════════ */
-.empty{text-align:center;padding:48px 20px;color:var(--text3)}
-.empty-ic{font-size:48px;margin-bottom:14px;opacity:.35}
-.empty-t{font-size:15px;font-weight:700;color:var(--text2);margin-bottom:6px}
-.empty-s{font-size:13px;line-height:1.6}
+/* ═══ EMPTY ═══════════════════════════════════════════════════════════════ */
+.empty{text-align:center;padding:50px 20px;color:var(--text3)}
+.empty-ic{font-size:50px;margin-bottom:14px;opacity:.3}
+.ei-t{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.ei-s{font-size:13px;line-height:1.7}
 
-/* ══ DIAGNOSE ═══════════════════════════════════════════════════════════ */
-.diag-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
-.diag-row:last-child{border:none}
-
-/* ══ SCROLLBAR ══════════════════════════════════════════════════════════ */
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-thumb{background:var(--blue-border);border-radius:3px}
-
-/* ══ RESPONSIVE ═════════════════════════════════════════════════════════ */
-@media(max-width:600px){.vgrid{grid-template-columns:repeat(2,1fr)}.nb{font-size:11px;padding:8px 7px}.pt{padding:6px 10px;font-size:11px}}
-
-/* ══ TOGGLE ═════════════════════════════════════════════════════════════ */
+/* ═══ TOGGLE ══════════════════════════════════════════════════════════════ */
 .tgl{width:44px;height:24px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid var(--border2);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
 .tgl.on{background:var(--blue);border-color:var(--blue)}
 .tgl::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
 .tgl.on::after{left:23px}
 
-/* Error box */
-.errbox{color:var(--red);font-size:13px;padding:12px 14px;background:rgba(244,63,94,.08);border-radius:var(--r2);border:1px solid rgba(244,63,94,.25);line-height:1.5}
+/* ═══ SCROLLBAR ═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--blue4);border-radius:3px}
+@media(max-width:600px){.vgrid{grid-template-columns:repeat(2,1fr)}.nb{font-size:11px;padding:8px 7px}}
+
+/* ═══ DIAG ROW ════════════════════════════════════════════════════════════ */
+.dr{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.dr:last-child{border:none}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════ BACKGROUND ART ═══════════════════════════════ -->
-<div id="bg">
-  <div class="bg-glow1"></div>
-  <div class="bg-glow2"></div>
-  <div class="bg-glow3"></div>
+<!-- Background art -->
+<div id="bg-art">
+  <div class="bg-glow g1"></div>
+  <div class="bg-glow g2"></div>
+  <div class="bg-glow g3"></div>
 
-  <!-- Music staff lines - now visible in blue -->
-  <svg class="staff" style="top:28%;height:50px" viewBox="0 0 1600 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="0" y1="5"  x2="1600" y2="5"  stroke-width="1"/>
-    <line x1="0" y1="15" x2="1600" y2="15" stroke-width="1"/>
-    <line x1="0" y1="25" x2="1600" y2="25" stroke-width="1"/>
-    <line x1="0" y1="35" x2="1600" y2="35" stroke-width="1"/>
-    <line x1="0" y1="45" x2="1600" y2="45" stroke-width="1"/>
+  <!-- Music staff lines (blue, visible on dark blue bg) -->
+  <svg class="staff" style="top:25%;height:50px;opacity:0.12" viewBox="0 0 1600 50" preserveAspectRatio="none">
+    <line x1="0" y1="5"  x2="1600" y2="5"  stroke="#4d9fff" stroke-width="1"/>
+    <line x1="0" y1="17" x2="1600" y2="17" stroke="#4d9fff" stroke-width="1"/>
+    <line x1="0" y1="29" x2="1600" y2="29" stroke="#4d9fff" stroke-width="1"/>
+    <line x1="0" y1="41" x2="1600" y2="41" stroke="#4d9fff" stroke-width="1"/>
   </svg>
-  <svg class="staff" style="top:62%;height:50px" viewBox="0 0 1600 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="0" y1="5"  x2="1600" y2="5"  stroke-width="1"/>
-    <line x1="0" y1="15" x2="1600" y2="15" stroke-width="1"/>
-    <line x1="0" y1="25" x2="1600" y2="25" stroke-width="1"/>
-    <line x1="0" y1="35" x2="1600" y2="35" stroke-width="1"/>
-    <line x1="0" y1="45" x2="1600" y2="45" stroke-width="1"/>
+  <svg class="staff" style="top:65%;height:50px;opacity:0.10" viewBox="0 0 1600 50" preserveAspectRatio="none">
+    <line x1="0" y1="5"  x2="1600" y2="5"  stroke="#4d9fff" stroke-width="1"/>
+    <line x1="0" y1="17" x2="1600" y2="17" stroke="#4d9fff" stroke-width="1"/>
+    <line x1="0" y1="29" x2="1600" y2="29" stroke="#4d9fff" stroke-width="1"/>
+    <line x1="0" y1="41" x2="1600" y2="41" stroke="#4d9fff" stroke-width="1"/>
   </svg>
 
-  <!-- Violin — yellow strokes, visible on dark blue bg -->
-  <svg style="position:absolute;right:-30px;top:6%;width:240px;opacity:0.11" viewBox="0 0 200 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Violin (yellow) -->
+  <svg style="position:absolute;right:-25px;top:5%;width:230px;opacity:0.13" viewBox="0 0 200 500" fill="none">
     <ellipse cx="100" cy="130" rx="55" ry="80" stroke="#f5c518" stroke-width="2.5"/>
     <ellipse cx="100" cy="370" rx="65" ry="95" stroke="#f5c518" stroke-width="2.5"/>
     <rect x="85" y="207" width="30" height="88" stroke="#f5c518" stroke-width="2"/>
     <path d="M60 210 Q45 248 60 292" stroke="#f5c518" stroke-width="2"/>
     <path d="M140 210 Q155 248 140 292" stroke="#f5c518" stroke-width="2"/>
-    <line x1="100" y1="50" x2="100" y2="460" stroke="#f5c518" stroke-width="1.2" opacity=".6"/>
+    <line x1="100" y1="50" x2="100" y2="460" stroke="#f5c518" stroke-width="1.2"/>
     <line x1="80" y1="248" x2="120" y2="248" stroke="#f5c518" stroke-width="2"/>
     <ellipse cx="93" cy="248" rx="6" ry="9" stroke="#f5c518" stroke-width="1.5"/>
     <ellipse cx="107" cy="248" rx="6" ry="9" stroke="#f5c518" stroke-width="1.5"/>
     <rect x="88" y="28" width="24" height="32" rx="5" stroke="#f5c518" stroke-width="2"/>
-    <line x1="93" y1="18" x2="93" y2="28" stroke="#f5c518" stroke-width="2.5"/>
-    <line x1="100" y1="16" x2="100" y2="28" stroke="#f5c518" stroke-width="2.5"/>
-    <line x1="107" y1="18" x2="107" y2="28" stroke="#f5c518" stroke-width="2.5"/>
+    <line x1="93" y1="16" x2="93" y2="28" stroke="#f5c518" stroke-width="2.5"/>
+    <line x1="100" y1="14" x2="100" y2="28" stroke="#f5c518" stroke-width="2.5"/>
+    <line x1="107" y1="16" x2="107" y2="28" stroke="#f5c518" stroke-width="2.5"/>
   </svg>
 
-  <!-- Guitar neck — blue strokes -->
-  <svg style="position:absolute;left:-15px;bottom:120px;width:160px;opacity:0.12;transform:rotate(-12deg)" viewBox="0 0 80 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Guitar neck (blue) -->
+  <svg style="position:absolute;left:-12px;bottom:100px;width:155px;opacity:0.14;transform:rotate(-12deg)" viewBox="0 0 80 420" fill="none">
     <rect x="28" y="0" width="24" height="420" rx="5" stroke="#4d9fff" stroke-width="2"/>
     <line x1="28" y1="55"  x2="52" y2="55"  stroke="#4d9fff" stroke-width="1.5"/>
     <line x1="28" y1="110" x2="52" y2="110" stroke="#4d9fff" stroke-width="1.5"/>
@@ -278,124 +238,150 @@ textarea.inp{resize:vertical;min-height:90px}
     <line x1="28" y1="275" x2="52" y2="275" stroke="#4d9fff" stroke-width="1.5"/>
     <line x1="28" y1="330" x2="52" y2="330" stroke="#4d9fff" stroke-width="1.5"/>
     <line x1="28" y1="385" x2="52" y2="385" stroke="#4d9fff" stroke-width="1.5"/>
-    <line x1="32" y1="0" x2="32" y2="420" stroke="#4d9fff" stroke-width=".7" opacity=".5"/>
-    <line x1="37" y1="0" x2="37" y2="420" stroke="#4d9fff" stroke-width=".7" opacity=".5"/>
-    <line x1="43" y1="0" x2="43" y2="420" stroke="#4d9fff" stroke-width=".7" opacity=".5"/>
-    <line x1="48" y1="0" x2="48" y2="420" stroke="#4d9fff" stroke-width=".7" opacity=".5"/>
+    <line x1="33" y1="0" x2="33" y2="420" stroke="#4d9fff" stroke-width=".6" opacity=".5"/>
+    <line x1="38" y1="0" x2="38" y2="420" stroke="#4d9fff" stroke-width=".6" opacity=".5"/>
+    <line x1="43" y1="0" x2="43" y2="420" stroke="#4d9fff" stroke-width=".6" opacity=".5"/>
+    <line x1="47" y1="0" x2="47" y2="420" stroke="#4d9fff" stroke-width=".6" opacity=".5"/>
   </svg>
 
-  <!-- Drum kit — yellow -->
-  <svg style="position:absolute;left:20px;top:52%;width:190px;opacity:0.1" viewBox="0 0 200 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Drum kit (yellow) -->
+  <svg style="position:absolute;left:18px;top:50%;width:185px;opacity:0.11" viewBox="0 0 200 180" fill="none">
     <ellipse cx="100" cy="95" rx="88" ry="36" stroke="#f5c518" stroke-width="2"/>
     <ellipse cx="100" cy="86" rx="88" ry="36" stroke="#f5c518" stroke-width="1.5"/>
-    <ellipse cx="38"  cy="38" rx="36" ry="15" stroke="#f5c518" stroke-width="1.5"/>
-    <ellipse cx="38"  cy="32" rx="36" ry="15" stroke="#f5c518" stroke-width="1"/>
+    <ellipse cx="38" cy="38" rx="36" ry="15" stroke="#f5c518" stroke-width="1.5"/>
+    <ellipse cx="38" cy="32" rx="36" ry="15" stroke="#f5c518" stroke-width="1"/>
     <ellipse cx="162" cy="52" rx="28" ry="11" stroke="#f5c518" stroke-width="1.5"/>
     <line x1="12"  y1="95"  x2="12"  y2="130" stroke="#f5c518" stroke-width="2"/>
     <line x1="188" y1="95"  x2="188" y2="130" stroke="#f5c518" stroke-width="2"/>
     <line x1="80"  y1="131" x2="58"  y2="175" stroke="#f5c518" stroke-width="2"/>
     <line x1="120" y1="131" x2="142" y2="175" stroke="#f5c518" stroke-width="2"/>
-    <line x1="16"  y1="30"  x2="4"   y2="10"  stroke="#f5c518" stroke-width="1.5"/>
-    <line x1="170" y1="42"  x2="182" y2="20"  stroke="#f5c518" stroke-width="1.5"/>
   </svg>
 
-  <!-- Piano -->
-  <svg class="piano-wrap" viewBox="0 0 1600 80" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
-    <rect width="1600" height="80" fill="rgba(5,16,31,0.6)"/>
-    <!-- White keys - light blue tint -->
-    <g fill="rgba(29,107,252,0.18)" stroke="rgba(29,107,252,0.3)" stroke-width="0.5">
-      <rect x="0"   y="0" width="57" height="80" rx="0"/><rect x="59"  y="0" width="57" height="80"/><rect x="118" y="0" width="57" height="80"/>
-      <rect x="177" y="0" width="57" height="80"/><rect x="236" y="0" width="57" height="80"/><rect x="295" y="0" width="57" height="80"/>
-      <rect x="354" y="0" width="57" height="80"/><rect x="413" y="0" width="57" height="80"/><rect x="472" y="0" width="57" height="80"/>
-      <rect x="531" y="0" width="57" height="80"/><rect x="590" y="0" width="57" height="80"/><rect x="649" y="0" width="57" height="80"/>
-      <rect x="708" y="0" width="57" height="80"/><rect x="767" y="0" width="57" height="80"/><rect x="826" y="0" width="57" height="80"/>
-      <rect x="885" y="0" width="57" height="80"/><rect x="944" y="0" width="57" height="80"/><rect x="1003" y="0" width="57" height="80"/>
-      <rect x="1062" y="0" width="57" height="80"/><rect x="1121" y="0" width="57" height="80"/><rect x="1180" y="0" width="57" height="80"/>
-      <rect x="1239" y="0" width="57" height="80"/><rect x="1298" y="0" width="57" height="80"/><rect x="1357" y="0" width="57" height="80"/>
-      <rect x="1416" y="0" width="57" height="80"/><rect x="1475" y="0" width="57" height="80"/><rect x="1534" y="0" width="57" height="80"/>
-    </g>
-    <!-- Black keys - yellow tint -->
-    <g fill="rgba(245,197,24,0.25)" rx="2">
-      <rect x="40"   y="0" width="34" height="52" rx="2"/><rect x="99"   y="0" width="34" height="52" rx="2"/>
-      <rect x="217"  y="0" width="34" height="52" rx="2"/><rect x="276"  y="0" width="34" height="52" rx="2"/>
-      <rect x="335"  y="0" width="34" height="52" rx="2"/><rect x="453"  y="0" width="34" height="52" rx="2"/>
-      <rect x="512"  y="0" width="34" height="52" rx="2"/><rect x="630"  y="0" width="34" height="52" rx="2"/>
-      <rect x="689"  y="0" width="34" height="52" rx="2"/><rect x="748"  y="0" width="34" height="52" rx="2"/>
-      <rect x="866"  y="0" width="34" height="52" rx="2"/><rect x="925"  y="0" width="34" height="52" rx="2"/>
-      <rect x="1043" y="0" width="34" height="52" rx="2"/><rect x="1102" y="0" width="34" height="52" rx="2"/>
-      <rect x="1161" y="0" width="34" height="52" rx="2"/><rect x="1279" y="0" width="34" height="52" rx="2"/>
-      <rect x="1338" y="0" width="34" height="52" rx="2"/><rect x="1456" y="0" width="34" height="52" rx="2"/>
-      <rect x="1515" y="0" width="34" height="52" rx="2"/>
-    </g>
-  </svg>
-
-  <!-- Headphones - blue -->
-  <svg style="position:absolute;right:55px;bottom:180px;width:130px;opacity:0.1" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Headphones (blue) -->
+  <svg style="position:absolute;right:55px;bottom:190px;width:125px;opacity:0.12" viewBox="0 0 100 100" fill="none">
     <path d="M15 58 C15 30 85 30 85 58" stroke="#4d9fff" stroke-width="4" stroke-linecap="round"/>
     <rect x="4"  y="53" width="20" height="34" rx="9" stroke="#4d9fff" stroke-width="3"/>
     <rect x="76" y="53" width="20" height="34" rx="9" stroke="#4d9fff" stroke-width="3"/>
   </svg>
 
-  <!-- Treble clef - yellow -->
-  <svg style="position:absolute;right:28%;top:10%;width:70px;opacity:0.09" viewBox="0 0 80 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Treble clef (yellow) -->
+  <svg style="position:absolute;right:28%;top:8%;width:65px;opacity:0.10" viewBox="0 0 80 160" fill="none">
     <path d="M40 140 C20 135 10 115 18 95 C26 75 50 70 50 50 C50 30 34 14 34 14 C30 60 20 80 20 100 C20 125 35 145 50 148 C65 151 75 138 70 125 C65 112 50 110 40 120 Z" stroke="#f5c518" stroke-width="2.5" fill="none"/>
   </svg>
 
-  <!-- EQ bars - left -->
-  <div class="eq-col" id="eql" style="left:0;padding:0 16px"></div>
-  <!-- EQ bars - right -->
-  <div class="eq-col" id="eqr" style="right:0;padding:0 16px"></div>
+  <!-- Piano strip (bottom) -->
+  <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:75px;opacity:0.09" viewBox="0 0 1600 75" preserveAspectRatio="xMidYMax slice">
+    <rect width="1600" height="75" fill="rgba(5,16,31,0.7)"/>
+    <g fill="rgba(29,107,252,0.25)" stroke="rgba(29,107,252,0.4)" stroke-width="0.5">
+      <rect x="0"   y="0" width="57" height="75"/><rect x="59"  y="0" width="57" height="75"/><rect x="118" y="0" width="57" height="75"/>
+      <rect x="177" y="0" width="57" height="75"/><rect x="236" y="0" width="57" height="75"/><rect x="295" y="0" width="57" height="75"/>
+      <rect x="354" y="0" width="57" height="75"/><rect x="413" y="0" width="57" height="75"/><rect x="472" y="0" width="57" height="75"/>
+      <rect x="531" y="0" width="57" height="75"/><rect x="590" y="0" width="57" height="75"/><rect x="649" y="0" width="57" height="75"/>
+      <rect x="708" y="0" width="57" height="75"/><rect x="767" y="0" width="57" height="75"/><rect x="826" y="0" width="57" height="75"/>
+      <rect x="885" y="0" width="57" height="75"/><rect x="944" y="0" width="57" height="75"/><rect x="1003" y="0" width="57" height="75"/>
+      <rect x="1062" y="0" width="57" height="75"/><rect x="1121" y="0" width="57" height="75"/><rect x="1180" y="0" width="57" height="75"/>
+      <rect x="1239" y="0" width="57" height="75"/><rect x="1298" y="0" width="57" height="75"/><rect x="1357" y="0" width="57" height="75"/>
+      <rect x="1416" y="0" width="57" height="75"/><rect x="1475" y="0" width="57" height="75"/><rect x="1534" y="0" width="57" height="75"/>
+    </g>
+    <g fill="rgba(245,197,24,0.28)">
+      <rect x="40"   y="0" width="34" height="48" rx="2"/><rect x="99"   y="0" width="34" height="48" rx="2"/>
+      <rect x="217"  y="0" width="34" height="48" rx="2"/><rect x="276"  y="0" width="34" height="48" rx="2"/>
+      <rect x="335"  y="0" width="34" height="48" rx="2"/><rect x="453"  y="0" width="34" height="48" rx="2"/>
+      <rect x="512"  y="0" width="34" height="48" rx="2"/><rect x="630"  y="0" width="34" height="48" rx="2"/>
+      <rect x="689"  y="0" width="34" height="48" rx="2"/><rect x="748"  y="0" width="34" height="48" rx="2"/>
+      <rect x="866"  y="0" width="34" height="48" rx="2"/><rect x="925"  y="0" width="34" height="48" rx="2"/>
+      <rect x="1043" y="0" width="34" height="48" rx="2"/><rect x="1102" y="0" width="34" height="48" rx="2"/>
+      <rect x="1161" y="0" width="34" height="48" rx="2"/><rect x="1279" y="0" width="34" height="48" rx="2"/>
+      <rect x="1338" y="0" width="34" height="48" rx="2"/><rect x="1456" y="0" width="34" height="48" rx="2"/>
+      <rect x="1515" y="0" width="34" height="48" rx="2"/>
+    </g>
+  </svg>
+
+  <!-- EQ bars -->
+  <div class="eq-side" id="eql" style="left:0"></div>
+  <div class="eq-side" id="eqr" style="right:0"></div>
 </div>
 
 <div id="root"></div>
 
 <script>
-// Build EQ bars
+// Build EQ bars and floating notes
 (function(){
-  const blues=['#1d6bfc','#4d8fff','#1558d6','#2d7aff','#1d6bfc'];
-  const yellows=['#f5c518','#d4a810','#f5c518','#e0b514','#f5c518'];
-  function makeEQ(id,colors,count){
+  const bl=['#1d6bfc','#4d9fff','#1558d6','#2d7aff'],yl=['#f5c518','#d4a810','#f5c518','#e0b514'];
+  function mk(id,cols,n){
     const c=document.getElementById(id);
-    for(let i=0;i<count;i++){
-      const b=document.createElement('div');
-      const h=10+Math.random()*50;
+    for(let i=0;i<n;i++){
+      const b=document.createElement('div'),h=10+Math.random()*55;
       b.className='eqb';
-      b.style.cssText=`height:${h}px;background:${colors[i%colors.length]};opacity:0.35;animation-duration:${.4+Math.random()*1.1}s;animation-delay:${Math.random()*.9}s;transform-origin:bottom`;
+      b.style.cssText=`height:${h}px;background:${cols[i%cols.length]};opacity:0.32;animation-duration:${.4+Math.random()*1.2}s;animation-delay:${Math.random()*.8}s`;
       c.appendChild(b);
     }
   }
-  makeEQ('eql',blues,22);
-  makeEQ('eqr',yellows,22);
-  // Floating notes
-  const notes=['♩','♪','♫','♬','𝄞','𝄢'];
-  const colorsN=['rgba(245,197,24,0.5)','rgba(29,107,252,0.5)','rgba(77,159,255,0.4)','rgba(245,197,24,0.35)'];
-  const bg=document.getElementById('bg');
+  mk('eql',bl,22); mk('eqr',yl,22);
+  const notes=['♩','♪','♫','♬','𝄞'],bg=document.getElementById('bg-art');
+  const clrs=['rgba(245,197,24,0.45)','rgba(29,107,252,0.45)','rgba(77,159,255,0.35)','rgba(245,197,24,0.3)'];
   for(let i=0;i<14;i++){
-    const n=document.createElement('div');
-    n.className='note';
+    const n=document.createElement('div');n.className='fn';
     n.textContent=notes[Math.floor(Math.random()*notes.length)];
-    n.style.cssText=`left:${3+Math.random()*94}%;font-size:${16+Math.random()*22}px;color:${colorsN[Math.floor(Math.random()*colorsN.length)]};animation-duration:${14+Math.random()*22}s;animation-delay:${Math.random()*18}s`;
+    n.style.cssText=`left:${3+Math.random()*93}%;font-size:${16+Math.random()*20}px;color:${clrs[Math.floor(Math.random()*clrs.length)]};animation-duration:${14+Math.random()*22}s;animation-delay:${Math.random()*18}s`;
     bg.appendChild(n);
   }
 })();
 </script>
 
 <script type="text/babel" data-presets="react">
-const {useState,useEffect,useRef,useCallback} = React;
-const API = '';  // same origin — server serves both frontend and API
+const {useState,useEffect,useCallback,useRef} = React;
 
-// ── Platform config ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  CRITICAL: Safe fetch — NEVER throws JSON.parse errors
+//  Always returns { data, error }. Never crashes.
+// ══════════════════════════════════════════════════════════════════════════════
+async function safeFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    });
+    // Read raw text first — NEVER call res.json() directly
+    const raw = await res.text();
+    if (!raw || !raw.trim()) {
+      return { data: null, error: res.ok ? 'Empty response from server.' : `Server error ${res.status}.` };
+    }
+    // Check if it looks like HTML (GitHub Pages 404, nginx error page, etc.)
+    if (raw.trimStart().startsWith('<')) {
+      if (res.status === 404) return { data: null, error: 'API endpoint not found (404). Is the backend server running?' };
+      if (res.status === 502 || res.status === 503) return { data: null, error: 'Backend server is unavailable. Check that it is running.' };
+      return { data: null, error: `Server returned HTML instead of JSON (status ${res.status}). The backend may not be running.` };
+    }
+    // Now safe to parse JSON
+    let parsed;
+    try { parsed = JSON.parse(raw); }
+    catch(e) { return { data: null, error: 'Invalid JSON from server: ' + raw.slice(0, 120) }; }
+    // Check for error field in response
+    if (!res.ok || parsed.error) return { data: null, error: parsed.error || `HTTP ${res.status}` };
+    return { data: parsed, error: null };
+  } catch(e) {
+    // Network error, CORS, server offline etc.
+    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError') || e.message.includes('fetch')) {
+      return { data: null, error: 'Cannot reach the backend server. Make sure server.js is running on port 4000 and you are accessing the app at http://localhost:4000 (not from GitHub Pages).' };
+    }
+    return { data: null, error: 'Network error: ' + e.message };
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Platform config
+// ══════════════════════════════════════════════════════════════════════════════
 const PLATFORMS = [
-  {id:'youtube',    label:'YouTube',    dot:'#FF0000',col:'#ff4444',bg:'rgba(255,68,68,.14)',   short:'YT', emoji:'▶'},
-  {id:'tiktok',     label:'TikTok',     dot:'#ee1d52',col:'#ee1d52',bg:'rgba(238,29,82,.14)',   short:'TK', emoji:'🎵'},
-  {id:'instagram',  label:'Instagram',  dot:'#E1306C',col:'#e1306c',bg:'rgba(225,48,108,.14)',  short:'IG', emoji:'📷'},
-  {id:'facebook',   label:'Facebook',   dot:'#1877F2',col:'#4d9fff',bg:'rgba(29,107,252,.14)',  short:'FB', emoji:'👍'},
-  {id:'twitter',    label:'Twitter / X',dot:'#1DA1F2',col:'#4dbfff',bg:'rgba(29,170,242,.14)',  short:'TW', emoji:'🐦'},
-  {id:'vimeo',      label:'Vimeo',      dot:'#1AB7EA',col:'#1ab7ea',bg:'rgba(26,183,234,.14)',  short:'VM', emoji:'🎬'},
-  {id:'soundcloud', label:'SoundCloud', dot:'#FF5500',col:'#ff8c42',bg:'rgba(255,85,0,.14)',    short:'SC', emoji:'☁'},
-  {id:'other',      label:'Other URL',  dot:'#f5c518',col:'#f5c518',bg:'rgba(245,197,24,.1)',   short:'URL',emoji:'🔗'},
+  {id:'youtube',    label:'YouTube',    dot:'#FF0000',col:'#ff4444',bg:'rgba(255,68,68,.14)',   short:'YT'},
+  {id:'tiktok',     label:'TikTok',     dot:'#ee1d52',col:'#ee1d52',bg:'rgba(238,29,82,.14)',   short:'TK'},
+  {id:'instagram',  label:'Instagram',  dot:'#E1306C',col:'#e1306c',bg:'rgba(225,48,108,.14)',  short:'IG'},
+  {id:'facebook',   label:'Facebook',   dot:'#1877F2',col:'#4d9fff',bg:'rgba(29,107,252,.14)',  short:'FB'},
+  {id:'twitter',    label:'Twitter/X',  dot:'#1DA1F2',col:'#4dbfff',bg:'rgba(29,170,242,.14)',  short:'TW'},
+  {id:'vimeo',      label:'Vimeo',      dot:'#1AB7EA',col:'#1ab7ea',bg:'rgba(26,183,234,.14)',  short:'VM'},
+  {id:'soundcloud', label:'SoundCloud', dot:'#FF5500',col:'#ff8c42',bg:'rgba(255,85,0,.14)',    short:'SC'},
+  {id:'other',      label:'Other URL',  dot:'#f5c518',col:'#f5c518',bg:'rgba(245,197,24,.1)',   short:'URL'},
 ];
-
 const VQUALITIES=[
   {label:'Best',      sub:'auto'},
   {label:'4K',        sub:'2160p ~2.8GB'},
@@ -410,14 +396,16 @@ const VFMTS=['mp4','mkv','webm','avi'];
 const AFMTS=['mp3','aac','wav','flac','ogg','m4a'];
 
 function getPlatCfg(n){
-  if(!n) return PLATFORMS[PLATFORMS.length-1];
+  if(!n)return PLATFORMS[PLATFORMS.length-1];
   const s=n.toLowerCase();
   return PLATFORMS.find(p=>s.includes(p.id)||s.includes(p.label.toLowerCase()))||PLATFORMS[PLATFORMS.length-1];
 }
 
-// ── Global toast ─────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  Global toast
+// ══════════════════════════════════════════════════════════════════════════════
 let _toast=null;
-function toast(msg,type='info',ms=3800){if(_toast)_toast(msg,type,ms);}
+function toast(msg,type='info',ms=4000){if(_toast)_toast(msg,type,ms);}
 function Toast(){
   const [t,setT]=useState(null);
   _toast=useCallback((msg,type,ms)=>{setT({msg,type});setTimeout(()=>setT(null),ms);},[]);
@@ -426,37 +414,34 @@ function Toast(){
   return <div className={`toast ${cls}`}>{t.msg}</div>;
 }
 
-// ── Spinner ──────────────────────────────────────────────────────────────────
 function Spinner({label}){
+  return <div style={{textAlign:'center',padding:'44px 20px'}}><div className="spinner"/>{label&&<div className="pulse-t">{label}</div>}</div>;
+}
+
+function Banner({type,children}){
+  const cls={ok:'sb-ok',error:'sb-err',warn:'sb-warn',info:'sb-info'}[type]||'sb-info';
+  const ic={ok:'✓',error:'✕',warn:'⚠',info:'ℹ'}[type]||'ℹ';
   return(
-    <div style={{textAlign:'center',padding:'42px 20px'}}>
-      <div className="spinner"/>
-      {label&&<div className="pulse-t">{label}</div>}
+    <div className={`status-banner ${cls}`}>
+      <span style={{fontWeight:900,fontSize:16,flexShrink:0}}>{ic}</span>
+      <span>{children}</span>
     </div>
   );
 }
 
-// ── Animated EQ header ───────────────────────────────────────────────────────
+// Animated header EQ
 function HeadEQ(){
-  const [h,setH]=useState([5,9,14,11,7,13,9,5,11,7]);
-  useEffect(()=>{
-    const iv=setInterval(()=>setH(p=>p.map(()=>4+Math.random()*22)),320);
-    return()=>clearInterval(iv);
-  },[]);
+  const [h,setH]=useState([5,10,16,12,8,14,9,5,12,8]);
+  useEffect(()=>{const iv=setInterval(()=>setH(p=>p.map(()=>4+Math.random()*22)),310);return()=>clearInterval(iv);},[]);
   return(
     <div className="heq">
       {h.map((v,i)=>(
-        <div key={i} className="heq-bar" style={{
-          height:v,
-          background:i%2===0?'var(--blue)':'var(--yellow)',
-          opacity:.7,borderRadius:2
-        }}/>
+        <div key={i} className="hb" style={{height:v,background:i%2===0?'var(--blue)':'var(--yellow)',opacity:.7,borderRadius:2}}/>
       ))}
     </div>
   );
 }
 
-// ── Platform badge ───────────────────────────────────────────────────────────
 function PlatBadge({name,small}){
   const p=getPlatCfg(name);
   return(
@@ -467,28 +452,23 @@ function PlatBadge({name,small}){
   );
 }
 
-// ── Video card ───────────────────────────────────────────────────────────────
 function VideoCard({v,onDownload,onSelect}){
-  const [imgErr,setImgErr]=useState(false);
+  const [err,setErr]=useState(false);
   return(
     <div className="vc" onClick={()=>onSelect&&onSelect(v)}>
-      {v.thumbnail&&!imgErr
-        ?<img className="vc-thumb" src={v.thumbnail} alt="" onError={()=>setImgErr(true)}/>
-        :<div className="vc-thumb-ph">🎬</div>
-      }
+      {v.thumbnail&&!err?<img className="vc-img" src={v.thumbnail} alt="" onError={()=>setErr(true)}/>:<div className="vc-ph">🎬</div>}
       {v.duration&&<div className="vc-dur">{v.duration}</div>}
-      <div className="vc-dl-btn" onClick={e=>{e.stopPropagation();onDownload&&onDownload(v);}} title="Download">⬇</div>
+      <div className="vc-dlbtn" onClick={e=>{e.stopPropagation();onDownload&&onDownload(v);}} title="Download">⬇</div>
       <div className="vc-body">
         <div className="vc-title">{v.title}</div>
-        <div className="vc-meta"><span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'70%'}}>{v.uploader}</span>{v.views&&<span>👁{v.views}</span>}</div>
+        <div className="vc-meta"><span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'65%'}}>{v.uploader}</span>{v.views&&<span>👁{v.views}</span>}</div>
       </div>
     </div>
   );
 }
 
-// ── Download Item ────────────────────────────────────────────────────────────
 function DlItem({item,onCancel}){
-  const sm={downloading:'bdg-blue',done:'bdg-green',error:'bdg-red',queued:'bdg-gray'};
+  const sm={downloading:'b-blue',done:'b-green',error:'b-red',queued:'b-gray'};
   const sl={downloading:'Downloading',done:'Complete',queued:'Queued',error:'Failed'};
   const fc={downloading:'var(--blue)',done:'var(--green)',error:'var(--red)',queued:'var(--text3)'}[item.status];
   const p=getPlatCfg(item.platform);
@@ -500,139 +480,118 @@ function DlItem({item,onCancel}){
           <div style={{fontSize:13,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{item.title}</div>
           <div style={{fontSize:11,color:'var(--text3)',marginTop:2}}>{(item.format||'').toUpperCase()} · {item.quality}</div>
         </div>
-        <span className={`badge ${sm[item.status]||'bdg-gray'}`} style={{flexShrink:0,fontSize:11}}>{sl[item.status]}</span>
+        <span className={`badge ${sm[item.status]||'b-gray'}`} style={{flexShrink:0}}>{sl[item.status]}</span>
       </div>
       <div className="pbar"><div className="pfill" style={{width:`${item.progress}%`,background:fc}}/></div>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:12}}>
         <span style={{color:'var(--text3)',overflow:'hidden',textOverflow:'ellipsis',flex:1}}>
-          {item.status==='downloading'&&<><span style={{color:'var(--yellow)',fontWeight:700}}>{item.speed}</span><span> · ETA {item.eta}</span>{item.log&&<span style={{marginLeft:6,fontSize:11,color:'var(--text3)'}}>{item.log}</span>}</>}
-          {item.status==='done'&&<span style={{color:'var(--green)',fontWeight:600}}>✓ {item.size||'Saved'} {item.fileUrl&&<> · <a href={`${API}${item.fileUrl}`} target="_blank" rel="noreferrer" style={{color:'var(--yellow)',textDecoration:'none'}}>Open ↗</a></>}</span>}
-          {item.status==='queued'&&'Waiting in queue…'}
+          {item.status==='downloading'&&<><span style={{color:'var(--yellow)',fontWeight:700}}>{item.speed}</span>{item.speed&&<span> · ETA {item.eta}</span>}{item.log&&<span style={{marginLeft:6,fontSize:11}}>{item.log}</span>}</>}
+          {item.status==='done'&&<span style={{color:'var(--green)',fontWeight:600}}>✓ {item.size||'Saved'}{item.fileUrl&&<> · <a href={item.fileUrl} target="_blank" rel="noreferrer" style={{color:'var(--yellow)',textDecoration:'none'}}>Open ↗</a></>}</span>}
+          {item.status==='queued'&&'Waiting…'}
           {item.status==='error'&&<span style={{color:'var(--red)'}}>{item.errorMsg}</span>}
         </span>
-        <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0,marginLeft:10}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginLeft:8,flexShrink:0}}>
           <span style={{fontWeight:700,color:'var(--text2)'}}>{item.progress}%</span>
-          {(item.status==='downloading'||item.status==='queued')&&
-            <button className="btn btn-sm btn-red" onClick={onCancel}>Cancel</button>}
+          {(item.status==='downloading'||item.status==='queued')&&<button className="btn btn-sm btn-red" onClick={onCancel}>Cancel</button>}
         </div>
       </div>
     </div>
   );
 }
 
-// ── Browse Tab ────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  Browse tab
+// ══════════════════════════════════════════════════════════════════════════════
 function BrowseTab({platform,onGoDownload}){
   const cfg=getPlatCfg(platform);
   const [query,setQuery]=useState('');
   const [results,setResults]=useState([]);
   const [loading,setLoading]=useState(false);
-  const [loadingTrend,setLoadingTrend]=useState(false);
+  const [trendLoading,setTrendLoading]=useState(false);
   const [err,setErr]=useState('');
   const [searched,setSearched]=useState(false);
   const [selected,setSelected]=useState(null);
   const [pasteUrl,setPasteUrl]=useState('');
 
-  // Reset when platform changes
-  useEffect(()=>{
-    setResults([]);setSearched(false);setErr('');setSelected(null);setPasteUrl('');
-    if(platform!=='other') loadTrending();
-  },[platform]);
+  useEffect(()=>{setResults([]);setSearched(false);setErr('');setSelected(null);setPasteUrl('');if(platform!=='other')loadTrending();},[platform]);
 
   async function loadTrending(){
-    setLoadingTrend(true);setErr('');
-    try{
-      const r=await fetch(`${API}/api/trending/${platform}`);
-      const d=await r.json();
-      if(d.error)throw new Error(d.error);
-      setResults(d.results||[]);
-      if(!d.results?.length)setErr('No trending content loaded — try searching below.');
-    }catch(e){setErr(e.message||'Failed to load trending content.');}
-    setLoadingTrend(false);
+    setTrendLoading(true);setErr('');
+    const {data,error}=await safeFetch(`/api/trending/${platform}`);
+    if(error){setErr(error);}
+    else{setResults(data.results||[]);if(!data.results?.length)setErr('No trending results. Try searching instead.');}
+    setTrendLoading(false);
   }
 
   async function doSearch(){
     if(!query.trim())return;
     setLoading(true);setErr('');setSearched(true);setSelected(null);
-    try{
-      const r=await fetch(`${API}/api/search`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:query.trim(),platform,limit:24})});
-      const d=await r.json();
-      if(d.error)throw new Error(d.error);
-      setResults(d.results||[]);
-      if(!d.results?.length)setErr('No results found. Try different keywords.');
-    }catch(e){setErr(e.message);}
+    const {data,error}=await safeFetch('/api/search',{method:'POST',body:JSON.stringify({query:query.trim(),platform,limit:24})});
+    if(error){setErr(error);}
+    else{setResults(data.results||[]);if(!data.results?.length)setErr('No results found. Try different keywords.');}
     setLoading(false);
   }
 
   return(
     <div>
-      {/* Paste URL box */}
-      <div className="card cp gcard" style={{marginBottom:12,borderColor:'var(--yellow-border)'}}>
-        <div className="sec-lbl" style={{color:'var(--yellow)'}}>📎 Paste a direct {cfg.label} URL to download</div>
+      <div className="card cp gcard" style={{marginBottom:12,borderColor:'var(--yellow4)'}}>
+        <div className="sec-lbl" style={{color:'var(--yellow)'}}>📎 Paste a direct {cfg.label} URL</div>
         <div style={{display:'flex',gap:8}}>
           <input className="inp" value={pasteUrl} onChange={e=>setPasteUrl(e.target.value)}
             onKeyDown={e=>e.key==='Enter'&&pasteUrl.trim()&&onGoDownload(pasteUrl.trim(),'')}
-            placeholder={`e.g. https://www.${platform==='other'?'youtube':platform}.com/watch?v=...`}
+            placeholder={`e.g. https://www.youtube.com/watch?v=...  or tiktok.com/...`}
           />
-          <button className="btn btn-yellow" disabled={!pasteUrl.trim()} onClick={()=>pasteUrl.trim()&&onGoDownload(pasteUrl.trim(),'')}>
-            ⬇ Analyze
-          </button>
+          <button className="btn btn-yellow" disabled={!pasteUrl.trim()} onClick={()=>pasteUrl.trim()&&onGoDownload(pasteUrl.trim(),'')}>⬇ Analyze</button>
         </div>
       </div>
 
-      {/* Search box (not for 'other') */}
       {platform!=='other'&&(
         <div style={{display:'flex',gap:8,marginBottom:14,flexWrap:'wrap'}}>
           <input className="inp" value={query} onChange={e=>setQuery(e.target.value)}
             onKeyDown={e=>e.key==='Enter'&&doSearch()}
-            placeholder={`Search ${cfg.label} — type any title, artist, topic…`}
-            style={{flex:1,minWidth:200}}
+            placeholder={`Search ${cfg.label} by title, artist, topic…`} style={{flex:1,minWidth:180}}
           />
           <button className="btn btn-blue" onClick={doSearch}>🔍 Search</button>
-          <button className="btn btn-sm" onClick={()=>{setSearched(false);setQuery('');loadTrending();}} title="Reload trending">⟳ Trending</button>
+          <button className="btn btn-sm" title="Reload trending" onClick={()=>{setSearched(false);setQuery('');loadTrending();}}>⟳ Trending</button>
         </div>
       )}
 
-      {err&&<div className="errbox" style={{marginBottom:12}}>{err}</div>}
+      {err&&<Banner type="error">{err}</Banner>}
 
-      {/* Selected video expanded card */}
       {selected&&(
         <div className="card gcard" style={{marginBottom:14}}>
-          <div className="thumb-prev">
-            {selected.thumbnail
-              ?<img src={selected.thumbnail} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
-              :<div style={{width:'100%',height:'100%',background:'var(--bg3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:48}}>🎬</div>}
-            <div className="thumb-over"/>
-            <div className="thumb-plat"><PlatBadge name={selected.platform||cfg.label}/></div>
-            {selected.duration&&<div className="thumb-dur">{selected.duration}</div>}
-            <div className="thumb-play" onClick={()=>onGoDownload(selected.url,selected.title)}>⬇</div>
+          <div className="tprev">
+            {selected.thumbnail?<img src={selected.thumbnail} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/>:<div style={{width:'100%',height:'100%',background:'var(--bg3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:48}}>🎬</div>}
+            <div className="tover"/><div className="tplat"><PlatBadge name={selected.platform||cfg.label}/></div>
+            {selected.duration&&<div className="tdur">{selected.duration}</div>}
+            <div className="tplay" onClick={()=>onGoDownload(selected.url,selected.title)}>⬇</div>
           </div>
           <div className="cp">
-            <div style={{fontWeight:700,fontSize:15,marginBottom:8}}>{selected.title}</div>
-            <div className="info-row" style={{marginBottom:14}}>
+            <div style={{fontWeight:800,fontSize:15,marginBottom:8}}>{selected.title}</div>
+            <div className="irow" style={{marginBottom:14}}>
               {selected.uploader&&<span style={{color:'var(--yellow)',fontWeight:600}}>{selected.uploader}</span>}
               {selected.views&&<><div className="dot3"/><span>👁 {selected.views}</span></>}
               {selected.duration&&<><div className="dot3"/><span>⏱ {selected.duration}</span></>}
             </div>
             <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-              <button className="btn btn-blue" style={{flex:1}} onClick={()=>onGoDownload(selected.url,selected.title)}>⬇ Download this video</button>
+              <button className="btn btn-blue" style={{flex:1}} onClick={()=>onGoDownload(selected.url,selected.title)}>⬇ Download</button>
               <button className="btn" onClick={()=>setSelected(null)}>✕</button>
             </div>
           </div>
         </div>
       )}
 
-      {(loading||loadingTrend)&&<Spinner label={loading?`Searching ${cfg.label}…`:`Loading ${cfg.label} trending content…`}/>}
+      {(loading||trendLoading)&&<Spinner label={loading?`Searching ${cfg.label}…`:`Loading ${cfg.label} content…`}/>}
 
-      {!loading&&!loadingTrend&&results.length>0&&(
+      {!loading&&!trendLoading&&results.length>0&&(
         <>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10,flexWrap:'wrap',gap:8}}>
-            <div className="sec-lbl">{searched?`Results`:`Trending on ${cfg.label}`} — {results.length} videos</div>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10,flexWrap:'wrap',gap:8}}>
+            <div className="sec-lbl">{searched?'Results':'Trending'} — {results.length} videos</div>
             {searched&&<button className="btn btn-sm" onClick={()=>{setSearched(false);setQuery('');loadTrending();}}>← Trending</button>}
           </div>
           <div className="vgrid">
             {results.map((v,i)=>(
-              <VideoCard key={v.id||i} v={v}
-                onSelect={setSelected}
+              <VideoCard key={v.id||i} v={v} onSelect={setSelected}
                 onDownload={v2=>{toast('Opening downloader…','info');onGoDownload(v2.url,v2.title);}}
               />
             ))}
@@ -640,19 +599,17 @@ function BrowseTab({platform,onGoDownload}){
         </>
       )}
 
-      {!loading&&!loadingTrend&&results.length===0&&platform==='other'&&(
-        <div className="empty">
-          <div className="empty-ic">🔗</div>
-          <div className="empty-t">Paste any URL above</div>
-          <div className="empty-s">This tab supports any site yt-dlp can download from.<br/>Paste the video URL in the box above and click Analyze.</div>
-        </div>
+      {!loading&&!trendLoading&&results.length===0&&platform==='other'&&!err&&(
+        <div className="empty"><div className="empty-ic">🔗</div><div className="ei-t">Paste any URL above</div><div className="ei-s">Supports 1000+ sites via yt-dlp</div></div>
       )}
     </div>
   );
 }
 
-// ── Download Tab ──────────────────────────────────────────────────────────────
-function DownloadTab({initUrl,initTitle,onQueueAdd}){
+// ══════════════════════════════════════════════════════════════════════════════
+//  Download tab
+// ══════════════════════════════════════════════════════════════════════════════
+function DownloadTab({initUrl,onQueueAdd}){
   const [url,setUrl]=useState(initUrl||'');
   const [loading,setLoading]=useState(false);
   const [info,setInfo]=useState(null);
@@ -663,55 +620,45 @@ function DownloadTab({initUrl,initTitle,onQueueAdd}){
   const [batch,setBatch]=useState('');
   const fmts=(quality==='Audio only'||AFMTS.includes(format))?AFMTS:[...VFMTS,...AFMTS];
 
-  useEffect(()=>{if(initUrl){setUrl(initUrl);analyze(initUrl);}else{setInfo(null);setErr('');}},
-    [initUrl]);
+  useEffect(()=>{if(initUrl){setUrl(initUrl);doAnalyze(initUrl);}else{setInfo(null);setErr('');}},[initUrl]);
 
-  async function analyze(u){
+  async function doAnalyze(u){
     const target=(u||url).trim();
-    if(!target){setErr('Please paste a URL first.');return;}
+    if(!target){setErr('Please paste a URL.');return;}
     setErr('');setInfo(null);setLoading(true);
-    try{
-      const r=await fetch(`${API}/api/info`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:target})});
-      const d=await r.json();
-      if(d.error)throw new Error(d.error);
-      setInfo(d);
-      if(d.availableHeights?.length){
-        const h=d.availableHeights[0];
+    const {data,error}=await safeFetch('/api/info',{method:'POST',body:JSON.stringify({url:target})});
+    if(error){setErr(error);}
+    else{
+      setInfo(data);
+      if(data.availableHeights?.length){
+        const h=data.availableHeights[0];
         setQuality(h>=2160?'4K':h>=1080?'1080p':h>=720?'720p':'480p');
       }
-    }catch(e){setErr(e.message||'Failed to get video info. Check the URL and try again.');}
+    }
     setLoading(false);
   }
 
-  function selQ(q){
-    setQuality(q);
-    if(q==='Audio only'){if(!AFMTS.includes(format))setFormat('mp3');}
-    else if(AFMTS.includes(format))setFormat('mp4');
-  }
-  function selF(f){
-    setFormat(f);
-    if(AFMTS.includes(f)){if(quality!=='Audio only')setQuality('Audio only');}
-    else if(quality==='Audio only')setQuality('1080p');
-  }
+  function selQ(q){setQuality(q);if(q==='Audio only'){if(!AFMTS.includes(format))setFormat('mp3');}else if(AFMTS.includes(format))setFormat('mp4');}
+  function selF(f){setFormat(f);if(AFMTS.includes(f)){if(quality!=='Audio only')setQuality('Audio only');}else if(quality==='Audio only')setQuality('1080p');}
 
   function doDownload(autoStart=true){
     if(!info)return;
     const q=quality==='Audio only'?'Audio':quality;
     const f=(quality==='Audio only'&&!AFMTS.includes(format))?'mp3':format;
     onQueueAdd({url:info.url||url,title:info.title,platform:info.platform,quality:q,format:f,autoStart});
-    toast(autoStart?`⬇ Downloading "${info.title.slice(0,40)}…"`:'➕ Added to queue',autoStart?'ok':'info');
+    toast(autoStart?`⬇ Download started!`:'➕ Added to queue',autoStart?'ok':'info');
   }
 
   function doBatch(){
     const lines=batch.split('\n').map(l=>l.trim()).filter(Boolean);
     if(!lines.length)return;
-    lines.forEach(u=>onQueueAdd({url:u,title:u.slice(0,60),platform:'Web',quality:quality==='Audio only'?'Audio':quality,format,autoStart:false}));
+    const q=quality==='Audio only'?'Audio':quality;
+    lines.forEach(u=>onQueueAdd({url:u,title:u.slice(0,60),platform:'Web',quality:q,format,autoStart:false}));
     toast(`✅ ${lines.length} URL(s) added to queue`,'ok');setBatch('');
   }
 
   return(
     <div style={{display:'flex',flexDirection:'column',gap:14}}>
-      {/* Mode buttons */}
       <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
         {[['url','🔗 Single URL'],['batch','📋 Batch URLs']].map(([m,l])=>(
           <button key={m} className={`btn btn-sm${mode===m?' btn-blue':''}`} onClick={()=>setMode(m)}>{l}</button>
@@ -723,13 +670,13 @@ function DownloadTab({initUrl,initTitle,onQueueAdd}){
           <div className="sec-lbl">Paste any video URL</div>
           <div style={{display:'flex',gap:8,marginBottom:9}}>
             <input className="inp" value={url} onChange={e=>setUrl(e.target.value)}
-              onKeyDown={e=>e.key==='Enter'&&analyze()}
-              placeholder="https://youtube.com/watch?v=... · tiktok.com · instagram.com · vimeo.com…"
+              onKeyDown={e=>e.key==='Enter'&&doAnalyze()}
+              placeholder="https://youtube.com/watch?v=...  or tiktok.com  or instagram.com  or vimeo.com…"
             />
-            <button className="btn btn-blue" onClick={()=>analyze()} disabled={loading}>{loading?'…':'🔍 Analyze'}</button>
+            <button className="btn btn-blue" disabled={loading} onClick={()=>doAnalyze()}>{loading?'…':'🔍 Analyze'}</button>
           </div>
           <button className="btn" style={{width:'100%',borderStyle:'dashed',fontSize:12,color:'var(--text3)'}}
-            onClick={()=>navigator.clipboard?.readText().then(t=>{if(t?.trim()){setUrl(t.trim());analyze(t.trim());}}).catch(()=>toast('Clipboard access denied','warn'))}>
+            onClick={()=>navigator.clipboard?.readText().then(t=>{if(t?.trim()){setUrl(t.trim());doAnalyze(t.trim());}}).catch(()=>toast('Clipboard access denied. Paste manually.','warn'))}>
             📋 Paste from clipboard &amp; analyze
           </button>
         </div>
@@ -748,33 +695,43 @@ function DownloadTab({initUrl,initTitle,onQueueAdd}){
       )}
 
       {loading&&<Spinner label="Fetching video info — please wait…"/>}
-      {err&&<div className="errbox">{err}<br/><small style={{opacity:.7}}>Tip: Make sure yt-dlp is installed (run: pip install yt-dlp) and the URL is a public video.</small></div>}
+
+      {err&&(
+        <Banner type="error">
+          {err}
+          {(err.includes('not running')||err.includes('localhost')||err.includes('backend'))&&(
+            <div style={{marginTop:8,fontSize:12,lineHeight:1.7}}>
+              <strong>Fix:</strong> Make sure the backend server is running.<br/>
+              Open a terminal in the swiftdl folder and run: <code style={{background:'rgba(0,0,0,.3)',padding:'1px 6px',borderRadius:4}}>node server.js</code><br/>
+              Then open the app at <strong>http://localhost:4000</strong> — not from GitHub Pages.
+            </div>
+          )}
+        </Banner>
+      )}
 
       {info&&!loading&&(
         <>
-          {/* Video result card */}
           <div className="card gcard" style={{overflow:'hidden'}}>
             {info.thumbnail&&(
-              <div className="thumb-prev">
+              <div className="tprev">
                 <img src={info.thumbnail} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
-                <div className="thumb-over"/>
-                <div className="thumb-plat"><PlatBadge name={info.platform}/></div>
-                {info.duration&&<div className="thumb-dur">{info.duration}</div>}
+                <div className="tover"/>
+                <div className="tplat"><PlatBadge name={info.platform}/></div>
+                {info.duration&&<div className="tdur">{info.duration}</div>}
               </div>
             )}
             <div className="cp" style={{paddingTop:info.thumbnail?14:18}}>
               {!info.thumbnail&&<div style={{marginBottom:8}}><PlatBadge name={info.platform}/></div>}
               <div style={{fontWeight:800,fontSize:15,lineHeight:1.4,marginBottom:8}}>{info.title}</div>
-              <div className="info-row">
+              <div className="irow">
                 {info.uploader&&<span style={{color:'var(--yellow)',fontWeight:600}}>{info.uploader}</span>}
-                {info.views&&info.views!=='–'&&<><div className="dot3"/><span>👁 {info.views}</span></>}
-                {info.likes&&info.likes!=='–'&&<><div className="dot3"/><span>♡ {info.likes}</span></>}
+                {info.views&&<><div className="dot3"/><span>👁 {info.views}</span></>}
+                {info.likes&&<><div className="dot3"/><span>♡ {info.likes}</span></>}
                 {info.date&&<><div className="dot3"/><span>📅 {info.date}</span></>}
               </div>
             </div>
           </div>
 
-          {/* Quality */}
           <div className="card cp">
             <div className="sec-lbl">Quality</div>
             <div className="qgrid">
@@ -786,28 +743,23 @@ function DownloadTab({initUrl,initTitle,onQueueAdd}){
             </div>
           </div>
 
-          {/* Format */}
           <div className="card cp">
             <div className="sec-lbl">Format</div>
             <div className="fpills">
-              {fmts.map(f=>{
-                const isA=AFMTS.includes(f);
-                return(
-                  <div key={f} className={`fp${isA?' aud':''}${format===f?' on':''}`} onClick={()=>selF(f)}>
-                    {f.toUpperCase()}
-                  </div>
-                );
-              })}
+              {fmts.map(f=>(
+                <div key={f} className={`fp${AFMTS.includes(f)?' aud':''}${format===f?' on':''}`} onClick={()=>selF(f)}>
+                  {f.toUpperCase()}
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Action row */}
           <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
-            <button className="btn btn-blue btn-full" style={{fontSize:15,padding:'14px',flex:2}} onClick={()=>doDownload(true)}>
+            <button className="btn btn-blue btn-full" style={{flex:2,fontSize:15,padding:'14px'}} onClick={()=>doDownload(true)}>
               ⬇ Download — {format.toUpperCase()} · {quality}
             </button>
-            <button className="btn" style={{flex:0,padding:'14px 16px',minWidth:100}} onClick={()=>doDownload(false)}>+ Queue</button>
-            <button className="btn btn-icon" title="Copy URL" onClick={()=>{navigator.clipboard?.writeText(info.url||url);toast('URL copied!','info');}}>📋</button>
+            <button className="btn" style={{minWidth:100,padding:'14px'}} onClick={()=>doDownload(false)}>+ Queue</button>
+            <button className="btn" style={{padding:'14px 13px'}} title="Copy URL" onClick={()=>{navigator.clipboard?.writeText(info.url||url);toast('URL copied!','info');}}>📋</button>
           </div>
         </>
       )}
@@ -815,7 +767,9 @@ function DownloadTab({initUrl,initTitle,onQueueAdd}){
   );
 }
 
-// ── Queue Tab ─────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  Queue tab
+// ══════════════════════════════════════════════════════════════════════════════
 function QueueTab({queue,onClearDone,onStartAll,onCancel}){
   const dl=queue.filter(d=>d.status==='downloading').length;
   const qu=queue.filter(d=>d.status==='queued').length;
@@ -827,62 +781,71 @@ function QueueTab({queue,onClearDone,onStartAll,onCancel}){
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:14}}>
           {[['⬇',dl,'Downloading','var(--blue)'],['⏳',qu,'Queued','var(--yellow)'],['✓',dn,'Done','var(--green)'],['✕',er,'Failed','var(--red)']].map(([ic,n,lb,col])=>(
             <div key={lb} style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--r2)',padding:'10px',textAlign:'center'}}>
-              <div style={{fontSize:19,fontWeight:900,color:n>0?col:'var(--text3)'}}>{ic} {n}</div>
+              <div style={{fontSize:18,fontWeight:900,color:n>0?col:'var(--text3)'}}>{ic} {n}</div>
               <div style={{fontSize:11,color:'var(--text3)',marginTop:2}}>{lb}</div>
             </div>
           ))}
         </div>
       )}
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,flexWrap:'wrap',gap:8}}>
-        <span style={{fontSize:13,color:'var(--text2)'}}>{queue.length===0?'No downloads yet':`${queue.length} item${queue.length!==1?'s':''}`}</span>
+        <span style={{fontSize:13,color:'var(--text2)'}}>{queue.length===0?'No downloads yet':`${queue.length} total`}</span>
         <div style={{display:'flex',gap:8}}>
           {qu>0&&<button className="btn btn-sm btn-blue" onClick={onStartAll}>▶ Start all ({qu})</button>}
           {dn>0&&<button className="btn btn-sm" onClick={onClearDone}>✕ Clear done</button>}
         </div>
       </div>
-      {queue.length===0&&(
-        <div className="empty">
-          <div className="empty-ic">📭</div>
-          <div className="empty-t">Queue is empty</div>
-          <div className="empty-s">Paste a URL in the Download tab, or browse a platform<br/>and click the ⬇ button on any video.</div>
-        </div>
-      )}
+      {queue.length===0&&<div className="empty"><div className="empty-ic">📭</div><div className="ei-t">Queue is empty</div><div className="ei-s">Paste a URL in the Download tab or browse a platform<br/>and click ⬇ on any video.</div></div>}
       {queue.map(item=><DlItem key={item.id} item={item} onCancel={()=>onCancel(item.id)}/>)}
     </div>
   );
 }
 
-// ── Files Tab ─────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  Files tab
+// ══════════════════════════════════════════════════════════════════════════════
 function FilesTab(){
   const [files,setFiles]=useState([]);
   const [loading,setLoading]=useState(true);
-  async function load(){setLoading(true);try{const r=await fetch(`${API}/api/downloads`);setFiles(await r.json());}catch(e){setFiles([]);}setLoading(false);}
+  const [err,setErr]=useState('');
+
+  async function load(){
+    setLoading(true);setErr('');
+    const {data,error}=await safeFetch('/api/downloads');
+    if(error)setErr(error); else setFiles(data||[]);
+    setLoading(false);
+  }
+
   useEffect(()=>{load();},[]);
-  async function del(name){if(!confirm(`Delete "${name}"?`))return;await fetch(`${API}/api/downloads/${encodeURIComponent(name)}`,{method:'DELETE'});toast('Deleted','info');load();}
+
+  async function del(name){
+    if(!confirm(`Delete "${name}"?`))return;
+    const {error}=await safeFetch(`/api/downloads/${encodeURIComponent(name)}`,{method:'DELETE'});
+    if(error)toast('Delete failed: '+error,'error'); else{toast('Deleted','info');load();}
+  }
+
   const ext=f=>f.split('.').pop().toLowerCase();
-  const ic=f=>({mp4:'🎬',mkv:'🎬',webm:'🎬',avi:'🎬',mov:'🎬',mp3:'🎵',aac:'🎵',wav:'🎵',flac:'🎵',ogg:'🎵',m4a:'🎵'})[ext(f)]||'📄';
+  const ic=f=>({mp4:'🎬',mkv:'🎬',webm:'🎬',avi:'🎬',mp3:'🎵',aac:'🎵',wav:'🎵',flac:'🎵',ogg:'🎵',m4a:'🎵'})[ext(f)]||'📄';
   const total=files.reduce((s,f)=>s+(f.bytes||0),0);
-  const fmtB=b=>b>1e9?(b/1e9).toFixed(2)+' GB':b>1e6?(b/1e6).toFixed(1)+' MB':b>1e3?(b/1e3).toFixed(0)+' KB':'0 B';
+  const fmtB=b=>b>1e9?(b/1e9).toFixed(2)+' GB':b>1e6?(b/1e6).toFixed(1)+' MB':'0 B';
+
   return(
     <div>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14,flexWrap:'wrap',gap:8}}>
-        <div>
-          <span style={{fontWeight:700}}>{files.length} file{files.length!==1?'s':''}</span>
-          {files.length>0&&<span style={{color:'var(--text3)',fontSize:12,marginLeft:8}}>· {fmtB(total)} total</span>}
-        </div>
+        <div><span style={{fontWeight:700}}>{files.length} file{files.length!==1?'s':''}</span>{files.length>0&&<span style={{color:'var(--text3)',fontSize:12,marginLeft:8}}>· {fmtB(total)} total</span>}</div>
         <button className="btn btn-sm" onClick={load}>🔄 Refresh</button>
       </div>
+      {err&&<Banner type="error">{err}</Banner>}
       {loading&&<Spinner label="Loading files…"/>}
-      {!loading&&files.length===0&&<div className="empty"><div className="empty-ic">📂</div><div className="empty-t">No files yet</div><div className="empty-s">Downloaded files appear here</div></div>}
+      {!loading&&!err&&files.length===0&&<div className="empty"><div className="empty-ic">📂</div><div className="ei-t">No files yet</div><div className="ei-s">Downloaded files appear here</div></div>}
       {files.map(f=>(
-        <div key={f.name} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--r2)',marginBottom:8,transition:'border-color .18s'}}>
+        <div key={f.name} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--r2)',marginBottom:8}}>
           <span style={{fontSize:28,flexShrink:0,width:36,textAlign:'center'}}>{ic(f.name)}</span>
           <div style={{flex:1,minWidth:0}}>
             <div style={{fontSize:13,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{f.name}</div>
             <div style={{fontSize:11,color:'var(--text3)',marginTop:2}}>{f.size} · {new Date(f.mtime).toLocaleDateString()}</div>
           </div>
           <div style={{display:'flex',gap:7,flexShrink:0}}>
-            <a href={`${API}${f.url}`} download className="btn btn-sm btn-yellow" style={{textDecoration:'none'}}>⬇ Save</a>
+            <a href={f.url} download className="btn btn-sm btn-yellow" style={{textDecoration:'none'}}>⬇ Save</a>
             <button className="btn btn-sm btn-red" onClick={()=>del(f.name)}>🗑</button>
           </div>
         </div>
@@ -891,13 +854,20 @@ function FilesTab(){
   );
 }
 
-// ── Settings Tab ──────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  Settings tab
+// ══════════════════════════════════════════════════════════════════════════════
 function SettingsTab({settings,setSettings}){
   const [diag,setDiag]=useState(null);
+  const [checking,setChecking]=useState(false);
+
   async function runDiag(){
-    try{const r=await fetch(`${API}/api/diagnose`);setDiag(await r.json());}
-    catch(e){setDiag({error:e.message});}
+    setChecking(true);setDiag(null);
+    const {data,error}=await safeFetch('/api/status');
+    if(error)setDiag({_error:error}); else setDiag(data);
+    setChecking(false);
   }
+
   function Row({label,sub,children}){
     return(
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'12px 0',borderBottom:'1px solid var(--border)'}}>
@@ -914,65 +884,54 @@ function SettingsTab({settings,setSettings}){
       </select>
     );
   }
+
   return(
     <div style={{display:'flex',flexDirection:'column',gap:14}}>
       <div className="card cp">
-        <div className="sec-lbl">Download preferences</div>
+        <div className="sec-lbl">Preferences</div>
         <Row label="Default quality"><Sel k="defaultQuality" opts={VQUALITIES.map(q=>q.label)}/></Row>
         <Row label="Default format"><Sel k="defaultFormat" opts={[...VFMTS,...AFMTS]}/></Row>
-        <Row label="Concurrent downloads" sub="Max parallel downloads"><Sel k="concurrent" opts={['1','2','3','5','10']}/></Row>
+        <Row label="Concurrent downloads"><Sel k="concurrent" opts={['1','2','3','5','10']}/></Row>
         <Row label="Speed limit"><Sel k="speedLimit" opts={['Unlimited','10 MB/s','5 MB/s','2 MB/s']}/></Row>
       </div>
       <div className="card cp">
         <div className="sec-lbl">Options</div>
-        {[
-          ['embedSubtitles','Embed subtitles','Download & embed available subtitles'],
-          ['saveThumbnail','Save thumbnail','Save video thumbnail as separate image'],
-          ['notifications','Desktop notifications','Alert when download finishes'],
-          ['autoMerge','Auto-merge streams','Merge HD video + audio (requires ffmpeg)'],
-        ].map(([k,l,s])=>(
-          <Row key={k} label={l} sub={s}>
-            <div className={`tgl${settings[k]?' on':''}`} onClick={()=>setSettings(p=>({...p,[k]:!p[k]}))}/>
-          </Row>
+        {[['embedSubtitles','Embed subtitles','Embed subtitles into downloaded video'],['saveThumbnail','Save thumbnail','Save thumbnail as image file'],['notifications','Desktop notifications','Alert when download completes'],['autoMerge','Auto-merge streams','Merge video+audio with ffmpeg']].map(([k,l,s])=>(
+          <Row key={k} label={l} sub={s}><div className={`tgl${settings[k]?' on':''}`} onClick={()=>setSettings(p=>({...p,[k]:!p[k]}))}/></Row>
         ))}
       </div>
 
-      {/* System diagnostics */}
+      {/* Status check */}
       <div className="card cp">
-        <div className="sec-lbl">System Diagnostics</div>
-        <div style={{marginBottom:12,fontSize:13,color:'var(--text2)',lineHeight:1.6}}>
-          Run diagnostics to check if yt-dlp, ffmpeg, and the backend are set up correctly.
-        </div>
-        <button className="btn btn-blue" onClick={runDiag}>🔍 Run diagnostics</button>
+        <div className="sec-lbl">Backend Status</div>
+        <p style={{fontSize:13,color:'var(--text2)',marginBottom:12,lineHeight:1.6}}>
+          Click "Check Status" to verify the backend is running and yt-dlp is installed correctly.
+        </p>
+        <button className="btn btn-blue" disabled={checking} onClick={runDiag}>
+          {checking?'Checking…':'🔍 Check Status'}
+        </button>
+
         {diag&&(
           <div style={{marginTop:14}}>
-            {diag.error&&<div className="errbox">{diag.error}</div>}
-            {!diag.error&&(
+            {diag._error&&<Banner type="error">{diag._error}<br/><br/><strong>This means the backend server is not running.</strong><br/>Open a terminal, go to the swiftdl folder, and run:<br/><code style={{background:'rgba(0,0,0,.3)',padding:'3px 8px',borderRadius:4,display:'inline-block',marginTop:6}}>node server.js</code><br/>Then open the app at <strong>http://localhost:4000</strong></Banner>}
+            {!diag._error&&(
               <>
-                {[
-                  ['Node.js', diag.node, true],
-                  ['OS', diag.platform, true],
-                  ['yt-dlp', diag.ytDlpPath, diag.ytDlpFound],
-                  ['ffmpeg', diag.ffmpeg?'Found ✓':'Not found', diag.ffmpeg],
-                  ['Downloads folder', diag.downloadsDirExists?'Ready ✓':'Missing!', diag.downloadsDirExists],
-                ].map(([k,v,ok])=>(
-                  <div key={k} className="diag-row">
-                    <span style={{color:'var(--text2)',fontWeight:600}}>{k}</span>
-                    <span style={{color:ok?'var(--green)':'var(--red)',fontFamily:'monospace',fontSize:12}}>{String(v)}</span>
-                  </div>
-                ))}
-                {!diag.ytDlpFound&&(
-                  <div className="errbox" style={{marginTop:10}}>
-                    yt-dlp not found!<br/>
-                    Run in your terminal: <code style={{background:'rgba(29,107,252,0.1)',padding:'2px 6px',borderRadius:4}}>pip install yt-dlp</code><br/>
-                    Then restart the server.
-                  </div>
-                )}
-                {!diag.ffmpeg&&(
-                  <div style={{marginTop:8,padding:'10px 12px',background:'var(--yellow-soft)',border:'1px solid var(--yellow-border)',borderRadius:'var(--r2)',fontSize:12,color:'var(--yellow2)'}}>
-                    ⚠ ffmpeg not found — needed for 1080p/4K. Install from ffmpeg.org
-                  </div>
-                )}
+                <Banner type={diag.ok?'ok':'error'}>{diag.message}</Banner>
+                <div style={{marginTop:10}}>
+                  {[
+                    ['Node.js', diag.node, true],
+                    ['Platform', diag.platform, true],
+                    ['yt-dlp', diag.ytDlpPath, diag.ytDlp],
+                    ['ffmpeg', diag.ffmpeg?'Found ✓':'Not found', diag.ffmpeg],
+                  ].map(([k,v,ok])=>(
+                    <div key={k} className="dr">
+                      <span style={{color:'var(--text2)',fontWeight:600}}>{k}</span>
+                      <span style={{color:ok?'var(--green)':'var(--red)',fontSize:12,fontFamily:'monospace'}}>{String(v)}</span>
+                    </div>
+                  ))}
+                </div>
+                {!diag.ytDlp&&<Banner type="error" style={{marginTop:10}}>yt-dlp not installed! Run in terminal: <code style={{background:'rgba(0,0,0,.3)',padding:'1px 6px',borderRadius:4}}>pip install yt-dlp</code> then restart server.js</Banner>}
+                {!diag.ffmpeg&&<div style={{marginTop:8}}><Banner type="warn">ffmpeg not found — 1080p/4K downloads may fail. Install from ffmpeg.org</Banner></div>}
               </>
             )}
           </div>
@@ -980,86 +939,97 @@ function SettingsTab({settings,setSettings}){
       </div>
 
       <div className="card cp">
-        <div className="sec-lbl">About SwiftDL v3</div>
-        <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.9}}>
-          <div>🎵 <strong style={{color:'var(--yellow)'}}>SwiftDL</strong> — Professional Video &amp; Audio Downloader</div>
+        <div className="sec-lbl">Deployment Guide</div>
+        <div style={{fontSize:13,color:'var(--text2)',lineHeight:2}}>
+          <div style={{marginBottom:8,fontWeight:700,color:'var(--yellow)'}}>⚠ Why GitHub Pages does not work for this app</div>
+          <div style={{marginBottom:12,color:'var(--text3)',lineHeight:1.7}}>GitHub Pages only hosts static HTML files. This app needs a Node.js backend to run yt-dlp. You must host the backend on a server.</div>
+          <div style={{fontWeight:700,color:'var(--text)'}}>✅ Free hosting options for the backend:</div>
+          <div>
+            {[['Railway.app','railway.app','Easiest — connect GitHub, deploy in 2 clicks, free tier'],['Render.com','render.com','Free tier, auto-deploys from GitHub'],['Fly.io','fly.io','Free tier, global edge servers']].map(([name,url,desc])=>(
+              <div key={name} style={{margin:'8px 0',padding:'10px 14px',background:'var(--bg3)',borderRadius:'var(--r2)',border:'1px solid var(--border)'}}>
+                <div><a href={`https://${url}`} target="_blank" rel="noreferrer" style={{color:'var(--yellow)',fontWeight:700,textDecoration:'none'}}>{name}</a> — <span style={{color:'var(--text3)',fontSize:12}}>{desc}</span></div>
+              </div>
+            ))}
+          </div>
+          <div style={{marginTop:12,padding:'12px 14px',background:'var(--blue3)',borderRadius:'var(--r2)',border:'1px solid var(--blue4)',fontSize:12,lineHeight:1.8}}>
+            <strong>For local use:</strong> just double-click START-WINDOWS.bat (Windows) or run START-MAC-LINUX.sh (Mac/Linux) and open <strong>http://localhost:4000</strong>
+          </div>
+        </div>
+      </div>
+
+      <div className="card cp">
+        <div className="sec-lbl">About</div>
+        <div style={{fontSize:13,color:'var(--text2)',lineHeight:2}}>
+          <div>🎵 <strong style={{color:'var(--yellow)'}}>SwiftDL v3</strong></div>
           <div>⚡ Powered by <strong>yt-dlp</strong> + <strong>ffmpeg</strong></div>
-          <div>🌐 Supports <strong>YouTube · TikTok · Instagram · Facebook · Twitter/X · Vimeo · SoundCloud</strong> and 1000+ sites</div>
+          <div>🌐 Supports YouTube · TikTok · Instagram · Facebook · Twitter/X · Vimeo · SoundCloud + 1000+ sites</div>
           <div>🔒 Runs 100% locally — no data sent anywhere</div>
-          <div style={{marginTop:8,color:'var(--text3)',fontSize:12}}>Downloads saved to: <code style={{background:'var(--blue-soft)',padding:'2px 7px',borderRadius:4}}>./downloads/</code></div>
         </div>
-        <div style={{display:'flex',gap:8,marginTop:14,flexWrap:'wrap'}}>
-          <button className="btn btn-sm" style={{borderColor:'var(--yellow-border)',color:'var(--yellow)'}} onClick={()=>{setSettings({defaultQuality:'1080p',defaultFormat:'mp4',concurrent:3,speedLimit:'Unlimited',embedSubtitles:true,saveThumbnail:false,notifications:true,autoMerge:true});toast('Settings reset to defaults','info');}}>Reset defaults</button>
-        </div>
+        <button className="btn btn-sm" style={{marginTop:12,color:'var(--red)',borderColor:'rgba(244,63,94,0.3)'}} onClick={()=>{if(confirm('Reset all settings?')){setSettings({defaultQuality:'1080p',defaultFormat:'mp4',concurrent:3,speedLimit:'Unlimited',embedSubtitles:true,saveThumbnail:false,notifications:true,autoMerge:true});toast('Settings reset','info');}}}>Reset defaults</button>
       </div>
     </div>
   );
 }
 
-// ── Root App ──────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  Root App
+// ══════════════════════════════════════════════════════════════════════════════
 function App(){
   const [tab,setTab]=useState('download');
   const [browseP,setBrowseP]=useState('youtube');
   const [queue,setQueue]=useState([]);
-  const [dlInit,setDlInit]=useState({url:'',title:''});
+  const [dlInit,setDlInit]=useState({url:''});
+  const [serverOk,setServerOk]=useState(null); // null=unchecked, true=ok, false=down
   const [settings,setSettings]=useState({
     defaultQuality:'1080p',defaultFormat:'mp4',concurrent:3,speedLimit:'Unlimited',
     embedSubtitles:true,saveThumbnail:false,notifications:true,autoMerge:true,
   });
   const activeN=queue.filter(d=>d.status==='downloading'||d.status==='queued').length;
 
+  // Check server on mount
+  useEffect(()=>{
+    safeFetch('/api/status').then(({data,error})=>{
+      setServerOk(!error && data?.ok);
+    });
+  },[]);
+
   function addToQueue({url,title,platform,quality,format,autoStart}){
     const id='j_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
     const item={id,url,title:title||url.slice(0,60),platform:platform||'Web',quality,format,
                 status:autoStart?'downloading':'queued',progress:0,speed:'',eta:'',size:'',fileUrl:'',log:'',errorMsg:''};
     setQueue(q=>[...q,item]);
-    if(autoStart)startDownload(id,url,quality,format);
-    if(autoStart)setTab('queue');
+    if(autoStart){startDl(id,url,quality,format);setTab('queue');}
   }
 
-  async function startDownload(id,url,quality,format){
-    try{
-      const r=await fetch(`${API}/api/download`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,quality,format})});
-      const {jobId,error}=await r.json();
-      if(error)throw new Error(error);
-      const es=new EventSource(`${API}/api/progress/${jobId}`);
-      es.onmessage=e=>{
-        const msg=JSON.parse(e.data);
-        setQueue(q=>q.map(item=>{
-          if(item.id!==id)return item;
-          if(msg.type==='progress')return{...item,progress:Math.min(99,Math.round(msg.percent||0)),speed:msg.speed||'',eta:msg.eta||''};
-          if(msg.type==='done'){
-            es.close();
-            if(settings.notifications&&'Notification'in window&&Notification.permission==='granted')
-              new Notification('SwiftDL ✓',{body:item.title});
-            return{...item,status:'done',progress:100,speed:'',eta:'',size:msg.size||'',fileUrl:msg.url||''};
-          }
-          if(msg.type==='error'){es.close();return{...item,status:'error',errorMsg:msg.message};}
-          if(msg.type==='info'||msg.type==='log')return{...item,log:(msg.message||'').slice(0,80)};
-          return item;
-        }));
-      };
-      es.onerror=()=>{es.close();setQueue(q=>q.map(item=>item.id===id&&item.status==='downloading'?{...item,status:'error',errorMsg:'Connection lost'}:item));};
-    }catch(err){
-      setQueue(q=>q.map(item=>item.id===id?{...item,status:'error',errorMsg:err.message}:item));
+  async function startDl(id,url,quality,format){
+    const {data,error}=await safeFetch('/api/download',{method:'POST',body:JSON.stringify({url,quality,format})});
+    if(error||!data?.jobId){
+      setQueue(q=>q.map(item=>item.id===id?{...item,status:'error',errorMsg:error||'Failed to start download'}:item));
+      return;
     }
+    const es=new EventSource(`/api/progress/${data.jobId}`);
+    es.onmessage=e=>{
+      let msg;
+      try{msg=JSON.parse(e.data);}catch{return;}
+      setQueue(q=>q.map(item=>{
+        if(item.id!==id)return item;
+        if(msg.type==='progress')return{...item,progress:Math.min(99,Math.round(msg.percent||0)),speed:msg.speed||'',eta:msg.eta||''};
+        if(msg.type==='done'){es.close();if(settings.notifications&&'Notification'in window&&Notification.permission==='granted')new Notification('SwiftDL ✓',{body:item.title});return{...item,status:'done',progress:100,speed:'',eta:'',size:msg.size||'',fileUrl:msg.url||''};}
+        if(msg.type==='error'){es.close();return{...item,status:'error',errorMsg:msg.message};}
+        if(msg.type==='info'||msg.type==='log')return{...item,log:(msg.message||'').slice(0,80)};
+        return item;
+      }));
+    };
+    es.onerror=()=>{es.close();setQueue(q=>q.map(item=>item.id===id&&item.status==='downloading'?{...item,status:'error',errorMsg:'Connection lost'}:item));};
   }
 
-  function cancelDownload(id){
-    fetch(`${API}/api/cancel/${id}`,{method:'POST'}).catch(()=>{});
+  function cancelDl(id){
+    safeFetch(`/api/cancel/${id}`,{method:'POST'}).catch(()=>{});
     setQueue(q=>q.filter(d=>d.id!==id));
     toast('Cancelled','info');
   }
 
-  // When Browse tab triggers "download this"
-  function handleBrowseDownload(url,title){
-    setDlInit({url,title});
-    setTab('download');
-  }
-
-  useEffect(()=>{
-    if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
-  },[]);
+  useEffect(()=>{if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();},[]);
 
   const NAVS=[
     {id:'download',label:'⬇ Download'},
@@ -1072,55 +1042,57 @@ function App(){
   return(
     <div id="app">
       {/* Header */}
-      <div className="header">
+      <div className="hdr">
         <div className="logo">🎵</div>
         <div>
-          <div className="brand"><span className="b">Swift</span><span className="y">DL</span></div>
-          <div className="brand-sub">Video &amp; Audio Downloader · powered by yt-dlp</div>
+          <div className="brand"><span style={{color:'var(--blue)'}}>Swift</span><span style={{color:'var(--yellow)'}}>DL</span></div>
+          <div className="brand-sub">Video &amp; Audio Downloader · yt-dlp powered</div>
         </div>
         <HeadEQ/>
       </div>
 
-      {/* Nav */}
-      <div className="nav">
-        {NAVS.map(n=>(
-          <button key={n.id} className={`nb${tab===n.id?' on':''}`} onClick={()=>setTab(n.id)}>{n.label}</button>
-        ))}
-      </div>
-
-      {/* Download Tab */}
-      {tab==='download'&&(
-        <DownloadTab
-          key={dlInit.url||'empty'}
-          initUrl={dlInit.url}
-          initTitle={dlInit.title}
-          onQueueAdd={addToQueue}
-        />
+      {/* Server status bar */}
+      {serverOk===false&&(
+        <div style={{marginTop:12}}>
+          <Banner type="error">
+            Backend server not detected. <strong>The app needs a Node.js backend to work.</strong><br/>
+            Run <code style={{background:'rgba(0,0,0,.3)',padding:'1px 6px',borderRadius:4}}>node server.js</code> in the swiftdl folder, then open <strong>http://localhost:4000</strong> in your browser.{' '}
+            <button className="btn btn-sm" style={{marginLeft:8,padding:'3px 10px',fontSize:11}} onClick={()=>safeFetch('/api/status').then(({data,error})=>setServerOk(!error&&data?.ok))}>Retry</button>
+          </Banner>
+        </div>
       )}
 
-      {/* Browse Tab */}
+      {/* Nav */}
+      <div className="nav">
+        {NAVS.map(n=><button key={n.id} className={`nb${tab===n.id?' on':''}`} onClick={()=>setTab(n.id)}>{n.label}</button>)}
+      </div>
+
+      {tab==='download'&&<DownloadTab key={dlInit.url||'empty'} initUrl={dlInit.url} onQueueAdd={addToQueue}/>}
+
       {tab==='browse'&&(
         <div>
-          {/* Platform selector */}
           <div className="ptabs">
             {PLATFORMS.map(p=>(
               <div key={p.id} className={`pt${browseP===p.id?' on':''}`}
                 onClick={()=>setBrowseP(p.id)}
                 style={browseP===p.id?{background:`linear-gradient(135deg,${p.col}cc,${p.col}88)`}:{}}
               >
-                <span className="pt-dot" style={{background:p.dot}}/>
-                {p.label}
+                <span className="pdot" style={{background:p.dot}}/>{p.label}
               </div>
             ))}
           </div>
-          <BrowseTab
-            platform={browseP}
-            onGoDownload={handleBrowseDownload}
-          />
+          <BrowseTab platform={browseP} onGoDownload={(url,title)=>{setDlInit({url});setTab('download');}}/>
         </div>
       )}
 
-      {tab==='queue'&&<QueueTab queue={queue} onClearDone={()=>setQueue(q=>q.filter(d=>d.status!=='done'))} onStartAll={()=>setQueue(q=>q.map(item=>{if(item.status==='queued'){startDownload(item.id,item.url,item.quality,item.format);return{...item,status:'downloading'};}return item;}))} onCancel={cancelDownload}/>}
+      {tab==='queue'&&(
+        <QueueTab queue={queue}
+          onClearDone={()=>setQueue(q=>q.filter(d=>d.status!=='done'))}
+          onStartAll={()=>setQueue(q=>q.map(item=>{if(item.status==='queued'){startDl(item.id,item.url,item.quality,item.format);return{...item,status:'downloading'};}return item;}))}
+          onCancel={cancelDl}
+        />
+      )}
+
       {tab==='files'&&<FilesTab/>}
       {tab==='settings'&&<SettingsTab settings={settings} setSettings={setSettings}/>}
 
