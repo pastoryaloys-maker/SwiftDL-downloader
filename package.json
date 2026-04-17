@@ -1,21 +1,17 @@
 {
   "name": "swiftdl",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "3.0.0",
+  "description": "Video & Audio Downloader powered by yt-dlp",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "postinstall": "pip install yt-dlp --break-system-packages 2>/dev/null || pip3 install yt-dlp 2>/dev/null || echo yt-dlp-install-skipped"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "build": "pip install yt-dlp || pip3 install yt-dlp || true"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
   }
 }

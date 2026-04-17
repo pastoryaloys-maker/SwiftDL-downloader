@@ -1,10 +1,12 @@
 services:
   - type: web
     name: swiftdl
-    env: node
+    runtime: node
     plan: free
-    buildCommand: npm install && pip install yt-dlp
+    buildCommand: npm install && (pip install yt-dlp || pip3 install yt-dlp || echo "yt-dlp install attempted")
     startCommand: node server.js
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 10000
