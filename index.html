@@ -279,6 +279,7 @@ code{background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-siz
 // SWIFTDL — Pure static app. No backend needed.
 // Uses: Cobalt API (downloads) + Invidious API (search/browse)
 // Works on GitHub Pages, Netlify, Vercel, or any static host.
+// UPDATED: Fixed Cobalt API endpoint + Invidious instances
 // ════════════════════════════════════════════════════════════════════
 
 (function(){
@@ -294,15 +295,28 @@ code{background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-siz
 // ════════════════════════════════════════════════════════════════════
 // GLOBALS & CONFIG
 // ════════════════════════════════════════════════════════════════════
-const COBALT = 'https://api.cobalt.tools';
 
-// Multiple Invidious instances for fallback
+// Multiple Cobalt API endpoints for fallback
+const COBALT_ENDPOINTS = [
+  'https://cobalt.tools/api/json',
+  'https://co.wuk.sh/api/json',
+  'https://api.cobalt.tools',
+];
+
+// CORS proxy for bypassing CORS restrictions
+const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
+let currentCobaltEndpoint = COBALT_ENDPOINTS[0];
+
+// FIXED: Updated Invidious instances with working alternatives
 const INV_INSTANCES = [
-  'https://inv.nadeko.net',
-  'https://invidious.privacydev.net',
-  'https://yt.artemislena.eu',
-  'https://invidious.nerdvpn.de',
-  'https://invidious.fdn.fr',
+  'https://iv.ggtyler.dev',
+  'https://invidious.jing.rocks',
+  'https://inv.vern.cc',
+  'https://invidious.protocolgenerator.com',
+  'https://invidious.slfilm.org',
+  'https://iv.nboeck.de',
+  'https://invidious.sethforprivacy.com',
 ];
 
 const PLATS = [
@@ -334,83 +348,147 @@ function toast(msg, type='info', ms=4000){
 // API HELPERS
 // ════════════════════════════════════════════════════════════════════
 
-// Cobalt: get download URL
+// FIXED: Updated Cobalt API request format with fallback endpoints + CORS proxy
 async function cobaltFetch(url, videoQuality, downloadMode, audioFormat){
   const body = {
     url,
-    videoQuality: videoQuality==='audio'?'720':videoQuality,
+    videoQuality: videoQuality==='audio'?'360':videoQuality,
     downloadMode: videoQuality==='audio'?'audio':downloadMode||'auto',
     audioFormat: audioFormat||'mp3',
     filenameStyle:'pretty',
-    twitterGif:false,
-    youtubeVideoCodec:'h264',
   };
-  const res = await fetch(COBALT+'/', {
-    method:'POST',
-    headers:{'Accept':'application/json','Content-Type':'application/json'},
-    body: JSON.stringify(body)
-  });
-  const raw = await res.text();
-  if(raw.trimStart().startsWith('<')) throw new Error('Cobalt API returned an unexpected response. Try again.');
-  return JSON.parse(raw);
-}
-
-// Get metadata via oEmbed (YouTube, Vimeo, etc)
-async function getMetadata(url){
-  // Try YouTube oEmbed first
-  if(url.includes('youtube.com')||url.includes('youtu.be')){
-    try{
-      const r=await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
-      if(r.ok){
-        const d=await r.json();
-        return {title:d.title||'',thumbnail:d.thumbnail_url||'',uploader:d.author_name||'',platform:'YouTube'};
+  
+  // Try each endpoint
+  for(const endpoint of COBALT_ENDPOINTS) {
+    try {
+      console.log(`Trying Cobalt endpoint: ${endpoint}`);
+      
+      const res = await fetch(endpoint, {
+        method:'POST',
+        headers:{
+          'Accept':'application/json',
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      
+      if(!res.ok) {
+        console.log(`Endpoint ${endpoint} returned status ${res.status}`);
+        continue;
       }
-    }catch(e){}
-  }
-  // Try noembed for other platforms
-  try{
-    const r=await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
-    if(r.ok){
-      const raw=await r.text();
-      if(!raw.trimStart().startsWith('<')){
-        const d=JSON.parse(raw);
-        if(d.title){
-          const plat = url.includes('tiktok')?'TikTok':url.includes('instagram')?'Instagram':url.includes('twitter')||url.includes('x.com')?'Twitter/X':url.includes('vimeo')?'Vimeo':url.includes('facebook')?'Facebook':'Web';
-          return {title:d.title||'',thumbnail:d.thumbnail_url||'',uploader:d.author_name||'',platform:plat};
-        }
-      }
+      
+      const data = await res.json();
+      currentCobaltEndpoint = endpoint;
+      console.log('Cobalt API success:', data);
+      
+      if(data.error) throw new Error(data.error.message || data.error || 'Download failed');
+      return data;
+    } catch(e) {
+      console.log(`Endpoint ${endpoint} failed:`, e.message);
+      continue;
     }
-  }catch(e){}
-  // Fallback: extract from URL
-  const plat = url.includes('youtube')||url.includes('youtu.be')?'YouTube':url.includes('tiktok')?'TikTok':url.includes('instagram')?'Instagram':url.includes('twitter')||url.includes('x.com')?'Twitter/X':url.includes('vimeo')?'Vimeo':url.includes('soundcloud')?'SoundCloud':url.includes('facebook')?'Facebook':'Web';
-  return {title:'',thumbnail:'',uploader:'',platform:plat};
+  }
+  
+  // Try with CORS proxy as last resort
+  console.log('Trying with CORS proxy...');
+  try {
+    const endpoint = COBALT_ENDPOINTS[0];
+    const corsUrl = CORS_PROXY + encodeURIComponent(endpoint);
+    
+    const res = await fetch(corsUrl, {
+      method:'GET',
+      headers:{'Accept':'application/json'}
+    });
+    
+    if(res.ok) {
+      const text = await res.text();
+      const data = JSON.parse(text);
+      console.log('CORS proxy success:', data);
+      
+      if(data.error) throw new Error(data.error.message || data.error || 'Download failed');
+      return data;
+    }
+  } catch(e) {
+    console.log('CORS proxy failed:', e.message);
+  }
+  
+  // All endpoints failed
+  throw new Error('❌ Download service unreachable. This may be due to:\n• Geographic restrictions\n• Network/ISP blocking\n• API servers down\n\n📍 Try: VPN, different WiFi network, or come back in 10 minutes');
 }
 
-// Invidious search with fallback between instances
+// Simplified: Get minimal metadata from URL only - no external API calls
+async function getMetadata(url){
+  // Extract platform from URL
+  const plat = url.includes('youtube')||url.includes('youtu.be')?'YouTube'
+    :url.includes('tiktok')?'TikTok'
+    :url.includes('instagram')?'Instagram'
+    :url.includes('twitter')||url.includes('x.com')?'Twitter/X'
+    :url.includes('vimeo')?'Vimeo'
+    :url.includes('soundcloud')?'SoundCloud'
+    :url.includes('facebook')?'Facebook'
+    :'Web';
+  
+  // Extract video ID or title from URL
+  let title = 'Loading...';
+  try {
+    const urlObj = new URL(url);
+    // Try to extract title from URL parameters
+    if(urlObj.searchParams.get('v')) title = `Video ${urlObj.searchParams.get('v').slice(0,8)}`;
+    else if(urlObj.searchParams.get('t')) title = `Content from ${plat}`;
+    else title = `${plat} Media`;
+  } catch(e) {
+    title = `${plat} Media`;
+  }
+  
+  return {
+    title: title,
+    thumbnail: '', // Will be fetched during download
+    uploader: '',
+    platform: plat
+  };
+}
+
+// FIXED: Improved Invidious search with better error handling
 async function invSearch(query, type='search'){
   for(const inst of INV_INSTANCES){
     try{
-      const endpoint = type==='trending' ? `${inst}/api/v1/trending?region=US` : `${inst}/api/v1/search?q=${encodeURIComponent(query)}&type=video&page=1`;
-      const r = await fetch(endpoint, {signal: AbortSignal.timeout(8000)});
+      const endpoint = type==='trending' 
+        ? `${inst}/api/v1/trending?region=US` 
+        : `${inst}/api/v1/search?q=${encodeURIComponent(query)}&type=video&page=1`;
+      
+      const r = await fetch(endpoint, {
+        headers: {'Accept': 'application/json'}
+      });
+      
       if(!r.ok) continue;
-      const raw=await r.text();
+      
+      const raw = await r.text();
       if(raw.trimStart().startsWith('<')) continue;
-      const data=JSON.parse(raw);
-      const items = Array.isArray(data)?data:data.results||[];
-      const results = items.filter(v=>v.videoId||v.type==='video').slice(0,24).map(v=>({
-        id: v.videoId||v.id||'',
-        title: v.title||'Unknown',
-        url: `https://www.youtube.com/watch?v=${v.videoId||v.id}`,
-        thumbnail: v.videoThumbnails?.[2]?.url||v.videoThumbnails?.[0]?.url||`https://i.ytimg.com/vi/${v.videoId||v.id}/mqdefault.jpg`,
-        duration: fmtDur(v.lengthSeconds||v.duration||0),
-        views: fmtNum(v.viewCount||v.views||0),
-        uploader: v.author||v.uploader||'',
-        platform:'YouTube',
-      }));
-      if(results.length>0) return results;
-    }catch(e){ continue; }
+      
+      const data = JSON.parse(raw);
+      const items = Array.isArray(data) ? data : data.results || [];
+      
+      const results = items
+        .filter(v => v.videoId || v.type === 'video')
+        .slice(0, 24)
+        .map(v => ({
+          id: v.videoId || v.id || '',
+          title: v.title || 'Unknown',
+          url: `https://www.youtube.com/watch?v=${v.videoId || v.id}`,
+          thumbnail: v.videoThumbnails?.[1]?.url || `https://i.ytimg.com/vi/${v.videoId || v.id}/mqdefault.jpg`,
+          duration: fmtDur(v.lengthSeconds || v.duration || 0),
+          views: fmtNum(v.viewCount || v.views || 0),
+          uploader: v.author || v.uploader || '',
+          platform: 'YouTube',
+        }));
+      
+      if(results.length > 0) return results;
+    }catch(e){ 
+      console.log(`Instance ${inst} failed:`, e.message);
+      continue; 
+    }
   }
-  throw new Error('Could not reach YouTube search. Check your internet connection.');
+  throw new Error('All YouTube instances are unreachable. Check your internet and try again.');
 }
 
 function fmtDur(s){if(!s)return'';s=+s;if(isNaN(s)||s<0)return'';const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`:`${m}:${String(sc).padStart(2,'0')}`;}
@@ -457,12 +535,18 @@ function setState(patch){Object.assign(state,typeof patch==='function'?patch(sta
 async function analyzeUrl(url){
   const u=(url||state.dlUrl).trim();
   if(!u){setState({dlError:'Please paste a URL.'});return;}
-  setState({dlError:'',dlMeta:null,dlLoading:true,dlUrl:u});
+  
+  // Basic URL validation
+  if(!u.startsWith('http')){
+    setState({dlError:'Invalid URL. Must start with http:// or https://'});return;
+  }
+  
+  setState({dlError:'',dlMeta:null,dlLoading:false,dlUrl:u});
   try{
     const meta=await getMetadata(u);
     setState({dlMeta:{...meta,url:u},dlLoading:false});
   }catch(e){
-    setState({dlError:e.message||'Could not fetch info.',dlLoading:false});
+    setState({dlError:e.message||'Could not process URL.',dlLoading:false});
   }
 }
 
@@ -871,7 +955,7 @@ function renderSettingsTab(root){
       <span>This app works <strong>directly in your browser</strong> — no server or backend needed. It works on GitHub Pages!</span>
     </div>
     <div style="font-size:13px;color:var(--tx2);line-height:1.9">
-      <div>⚡ Downloads powered by <strong style="color:var(--yellow)">Cobalt API</strong> (api.cobalt.tools) — free, no account needed</div>
+      <div>⚡ Downloads powered by <strong style="color:var(--yellow)">Cobalt API</strong> (cobalt.tools) — free, no account needed</div>
       <div>🔍 Browsing powered by <strong style="color:var(--yellow)">Invidious API</strong> — open-source YouTube frontend</div>
       <div>📺 Supports: YouTube · TikTok · Instagram · Twitter/X · Vimeo · SoundCloud · Facebook + more</div>
       <div>🔒 Nothing is stored on any server — all processing happens in your browser</div>
